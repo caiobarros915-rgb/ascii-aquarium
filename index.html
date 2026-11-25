@@ -20,13 +20,20 @@
   --bg:#08131c; --panel:#0d202c; --line:#1f4254; --text:#cfe8ef; --dim:#6f93a3;
   --accent:#5de0e6; --gold:#f5c451; --good:#5fe39a; --warn:#ff8f6b;
   --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --field:#08151f; --soft:rgba(93,224,230,.08); --fish:#ff9f43; --locked:#8a7560;
+  --warn-text:#ffb4a0; --danger:#ff9a9a; --danger-line:#a33; --danger-box:#7a2f2f;
 }
+html[data-theme=black]{--bg:#000;--panel:#0d0d0d;--line:#2e2e2e;--text:#ededed;--dim:#8f8f8f;--accent:#7dffb3;--gold:#ffd166;--good:#5fe39a;--warn:#ff8f6b;--field:#050505;--soft:rgba(125,255,179,.08)}
+html[data-theme=purple]{--bg:#190f2b;--panel:#251642;--line:#4a337f;--text:#eadfff;--dim:#a894d6;--accent:#c9a4ff;--gold:#ffd166;--good:#7ee0a8;--warn:#ff9e8a;--field:#170d29;--soft:rgba(201,164,255,.1)}
+html[data-theme=darkblue]{--bg:#070d24;--panel:#0d1736;--line:#25397a;--text:#d8e3ff;--dim:#8196cb;--accent:#6ea8ff;--gold:#f5c451;--good:#5fe39a;--warn:#ff8f6b;--field:#060b1f;--soft:rgba(110,168,255,.1)}
+html[data-theme=blue]{--bg:#1f4fae;--panel:#2a62c9;--line:#6f9ae8;--text:#f4f8ff;--dim:#bcd0f7;--accent:#b6f2ff;--gold:#ffe08a;--good:#9bffc4;--warn:#ffc2a8;--field:#1a418f;--soft:rgba(255,255,255,.12);--warn-text:#ffe0d2;--danger:#ffd0d0;--danger-line:#ffb0b0;--danger-box:#ffb0b0}
+html[data-theme=pink]{--bg:#ffd6e6;--panel:#fff0f6;--line:#eba3c1;--text:#4a1230;--dim:#96587a;--accent:#c2185b;--gold:#8f5300;--good:#17724a;--warn:#b3261e;--field:#ffffff;--soft:rgba(194,24,91,.08);--fish:#d9650a;--locked:#9a8a7a;--warn-text:#a3221b;--danger:#b3261e;--danger-line:#b3261e;--danger-box:#d97a8a}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--mono);font-size:14px;line-height:1.45}
 .app{max-width:1020px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left))}
 header.top{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;margin-bottom:14px}
 h1{margin:0;font-size:20px;letter-spacing:.04em}
-h1 .fishlogo{color:#ff9f43}
+h1 .fishlogo{color:var(--fish)}
 .sub{color:var(--dim);font-size:12px;margin-top:2px}
 .pts{border:1px solid var(--gold);color:var(--gold);padding:6px 12px;font-weight:700;white-space:nowrap}
 .tankbox{border:1px solid var(--line);background:var(--panel);padding:12px}
@@ -55,11 +62,11 @@ h3{margin:12px 0 4px;font-size:12px;color:var(--dim);letter-spacing:.12em;text-t
 .task .box{color:var(--dim);white-space:pre}
 .task .nm{flex:1}
 .task .p{color:var(--gold);white-space:nowrap}
-.task.done{border-color:#1d5a3f;color:var(--dim)}
+.task.done{border-color:var(--good);color:var(--dim)}
 .task.done .box{color:var(--good)} .task.done .nm{text-decoration:line-through}
 .del{padding:7px 9px;color:var(--dim)}
 form.add{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
-input,select{font-family:var(--mono);font-size:13px;color:var(--text);background:#08151f;border:1px solid var(--line);padding:7px 8px}
+input,select{font-family:var(--mono);font-size:13px;color:var(--text);background:var(--field);border:1px solid var(--line);padding:7px 8px}
 input[type=text]{flex:1;min-width:140px}
 .item{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px dotted var(--line)}
 .item:last-child{border-bottom:0}
@@ -74,7 +81,7 @@ input[type=text]{flex:1;min-width:140px}
 .cave{color:#7f8f9f}.bridge{color:#cf9962}.arch{color:#9aa9b8}.vase{color:#6aa7ff}
 .shell{color:#ffc9b8}.pebble{color:#a3afba}.roots{color:#a9744a}.skull{color:#ececec}
 .log2{color:#94643d}.fig{color:#ffb347}
-.eye{color:#fff;font-weight:700}.fname{color:#c9e9f3;opacity:.85}
+.eye{color:#fff;font-weight:700}.fname{color:#c9e9f3;opacity:.85}.emote{color:#fff;font-weight:700}
 .pel{color:#d9a066}.bub{color:#9fe9ff}.bgfar{color:var(--bgfar,#1c4660)}.ray{color:var(--ray,#1b546d)}
 .spark{color:#ffe08a;font-weight:700}
 .sel{color:#ffe08a;font-weight:700}
@@ -90,9 +97,9 @@ input[type=text]{flex:1;min-width:140px}
 .editbar .mv{min-width:38px;padding:7px 10px}
 .stage{display:flex;gap:16px;align-items:center;padding:10px 0 10px 10px;border-bottom:1px dotted var(--line);border-left:2px solid transparent}
 .stage:last-child{border-bottom:0}
-.stage pre{margin:0;min-width:130px;color:#ff9f43;font-family:var(--mono);font-size:15px;line-height:1.15;white-space:pre}
-.stage.locked pre{color:#8a7560}
-.stage.now{border-left-color:var(--accent);background:rgba(93,224,230,.06)}
+.stage pre{margin:0;min-width:130px;color:var(--fish);font-family:var(--mono);font-size:15px;line-height:1.15;white-space:pre}
+.stage.locked pre{color:var(--locked)}
+.stage.now{border-left-color:var(--accent);background:var(--soft)}
 .stage.now b{color:var(--accent)}
 .stage .meta{margin:0}
 .fcard{border:1px dotted var(--line);padding:10px;margin-top:8px}
@@ -101,32 +108,36 @@ input[type=text]{flex:1;min-width:140px}
 .fhead .meta{margin:0}
 .swatches{display:flex;flex-wrap:wrap;gap:4px}
 .sw{padding:3px 8px;font-size:12px}
-.sw.cur{border-color:var(--accent);background:rgba(93,224,230,.08)}
-.sw .px{color:var(--gold)}
+.sw{background:#0b1a26;color:#cfe8ef}
+.sw.cur{border-color:var(--accent);background:#12303f}
+.sw .px{color:#f5c451}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .wsw{display:inline-block;width:2.6ch;height:1em;vertical-align:-2px;margin-right:6px;border:1px solid #3b5f73}
 .tankframe{position:relative}
 #veil{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;transition:background 1.2s}
 .statusbar{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;margin-top:10px;font-size:12px;color:var(--dim)}
 .statusbar .hl{color:var(--text)}
-.statusbar button{padding:3px 10px;font-size:12px;margin-left:auto}
+.statusbar button{padding:3px 10px;font-size:12px}
+.statusbar .ctl{margin-left:auto;display:flex;gap:6px}
+input[type=range]{padding:0;border:0;background:transparent;width:160px;min-width:0;accent-color:var(--accent)}
 .bigclock{margin:12px 0;font-size:28px;line-height:1.05;color:var(--accent);text-align:center;font-family:var(--mono);white-space:pre}
-button[aria-pressed=true].modebtn{border-color:var(--accent);color:var(--accent);background:rgba(93,224,230,.08)}
-textarea{width:100%;font-family:var(--mono);font-size:12px;color:var(--text);background:#08151f;border:1px solid var(--line);padding:8px;resize:vertical;margin-bottom:6px}
+button[aria-pressed=true].modebtn{border-color:var(--accent);color:var(--accent);background:var(--soft)}
+textarea{width:100%;font-family:var(--mono);font-size:12px;color:var(--text);background:var(--field);border:1px solid var(--line);padding:8px;resize:vertical;margin-bottom:6px}
 textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .foot{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px;align-items:start}
 .box{border:1px solid var(--line);background:var(--panel);padding:12px 14px}
 .box h2{margin:0 0 8px;font-size:14px;letter-spacing:.06em;color:var(--accent)}
-.box.danger{border-color:#7a2f2f}
+.box.danger{border-color:var(--danger-box)}
 .box.danger h2{color:var(--warn)}
-.dangerbtn{border-color:#a33;color:#ff9a9a}
-.dangerbtn:hover:not(:disabled){border-color:#ff6b6b;color:#ff6b6b}
-.warn{color:#ffb4a0;margin:8px 0;font-size:13px}
+.dangerbtn{border-color:var(--danger-line);color:var(--danger)}
+.dangerbtn:hover:not(:disabled){border-color:var(--danger);color:var(--danger)}
+.warn{color:var(--warn-text);margin:8px 0;font-size:13px}
 #resetpanel ul{margin:6px 0 6px 18px;padding:0;font-size:13px}
 #resetpanel label{display:block;margin:10px 0 4px;font-size:13px}
 #resetpanel input[type=checkbox]{margin-right:8px;vertical-align:-1px}
 #resetpanel input[type=text]{width:100%;min-width:0}
 form.code{display:flex;gap:6px}
+.bonus{color:var(--accent);border:1px solid var(--accent);padding:0 5px;font-size:11px;margin-left:6px;white-space:nowrap}
 /* accordion */
 .acc{display:flex;flex-direction:column;gap:8px;margin-top:14px}
 details.panel{border:1px solid var(--line);background:var(--panel)}
@@ -134,7 +145,7 @@ details.panel>summary{list-style:none;cursor:pointer;display:flex;align-items:ce
 details.panel>summary::-webkit-details-marker{display:none}
 details.panel>summary::before{content:"[+]";color:var(--dim);font-weight:400;min-width:3ch}
 details.panel[open]>summary::before{content:"[-]";color:var(--accent)}
-details.panel>summary:hover{background:rgba(93,224,230,.06)}
+details.panel>summary:hover{background:var(--soft)}
 details.panel>summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 details.panel[open]>summary{border-bottom:1px dashed var(--line)}
 .chip{margin-left:auto;color:var(--dim);font-weight:400;font-size:12px;letter-spacing:0;text-align:right}
@@ -154,7 +165,7 @@ details.panel[open]>summary{border-bottom:1px dashed var(--line)}
 
   <section class="tankbox" aria-label="Fish tank">
     <div class="tankframe"><div id="tankwrap"><pre id="tank" role="img" aria-label="Animated ASCII fish tank with fish swimming around"></pre></div><div id="veil" aria-hidden="true"></div></div>
-    <div class="statusbar"><span id="clock"></span><span id="streakchip"></span><button type="button" id="soundbtn" aria-pressed="true">Sound: on</button></div>
+    <div class="statusbar"><span id="clock"></span><span id="streakchip"></span><span class="ctl"><button type="button" id="ambbtn" aria-pressed="false">Ambient: off</button><button type="button" id="soundbtn" aria-pressed="true">Sound: on</button></span></div>
     <div class="hud">
       <div class="stats" id="stats"></div>
       <button class="feed" id="feed" type="button">FEED  (5 pts)</button>
@@ -168,6 +179,8 @@ details.panel[open]>summary{border-bottom:1px dashed var(--line)}
       <div class="pbody">
         <div class="meta" id="taskmeta"></div>
         <div class="meta" id="streakmeta"></div>
+        <div class="meta" id="weekmeta"></div>
+        <div class="meta" id="bonusmeta"></div>
         <div id="tasklist"></div>
         <form class="add" id="addform">
           <input type="text" id="newname" maxlength="40" placeholder="Add your own task..." aria-label="New task name">
@@ -260,6 +273,22 @@ details.panel[open]>summary{border-bottom:1px dashed var(--line)}
         <textarea id="importbox" rows="3" aria-label="Paste backup code" placeholder="Paste a backup code here"></textarea>
         <div class="row"><button type="button" id="importbtn">Restore from code</button></div>
         <div class="meta" id="backupmsg" role="status"></div>
+        <h3>Feedback</h3>
+        <div class="row" style="align-items:center;flex-wrap:wrap">
+          <button type="button" id="vibbtn" aria-pressed="true">Vibration: on</button>
+          <span class="meta" id="vibnote" style="margin:0"></span>
+        </div>
+        <div class="row" style="align-items:center;flex-wrap:wrap;margin-top:6px">
+          <label for="ambvol" class="meta" style="margin:0">Ambient volume</label>
+          <input type="range" id="ambvol" min="0" max="100" value="50">
+        </div>
+        <h3>Tank life</h3>
+        <div class="row" style="align-items:center;flex-wrap:wrap">
+          <button type="button" id="playbtn" aria-pressed="true">Hiding &amp; playing: on</button>
+          <span class="meta" style="margin:0">Fish sleep in caves and castles at night, swim through the arch and chase each other.</span>
+        </div>
+        <h3>App theme</h3>
+        <div class="swatches" id="themelist" role="group" aria-label="App theme"></div>
         <h3>Time of day</h3>
         <div class="row" style="align-items:center;flex-wrap:wrap">
           <label for="timepreview" class="meta" style="margin:0">The tank follows Lisbon time. Preview:</label>
@@ -313,6 +342,17 @@ const KEY='ascii-aquarium-v2';   /* v2: fresh start */
 const FEED_COST=5,PELLETS=5,MAX_FISH=5,NAME_MAX=10;
 const FISH_COST=[0,50,100,150,200];            /* price of the fish you buy when you already own 1..4 */
 const DEFAULT_NAMES=['Finn','Bubbles','Pip','Coral','Splash'];
+const THEMES=[
+ {id:'ocean',name:'Ocean (default)',bg:'#08131c',accent:'#5de0e6'},
+ {id:'black',name:'Black',bg:'#000000',accent:'#7dffb3'},
+ {id:'darkblue',name:'Dark blue',bg:'#070d24',accent:'#6ea8ff'},
+ {id:'blue',name:'Blue',bg:'#1f4fae',accent:'#b6f2ff'},
+ {id:'purple',name:'Purple',bg:'#190f2b',accent:'#c9a4ff'},
+ {id:'pink',name:'Pink',bg:'#ffd6e6',accent:'#c2185b'}
+];
+const WEEK_GOAL=60, WEEK_BONUS=100;     /* weekly goal: finish 60 tasks Mon-Sun for +100 pts */
+const EMOTES=[':P',':)','>:)',';)','^___^','°__°','{=__=}','O_o','>.<'];
+const EMOTE_EVERY=[45000,90000], EMOTE_SHOW=2000, HAPPY_CHANCE=0.4;   /* random emote every 45-90 s, shown for 2 s; ':D' sometimes after eating */
 const FOCUS_OPTIONS=[25,30,45,50];
 const STREAK_MIN=3, MILESTONES={3:15,7:40,14:80,30:200,60:400,100:800};
 const STAGE_XP=[0,25,75,160,300];
@@ -357,7 +397,7 @@ const DEFAULT_TASKS=[
 /* ---------- decorations ---------- */
 const ITEMS=[
 {id:'bg',name:'Aquarium background',price:40,bg:true},
-{id:'castle',name:'Castle',price:90,z:1,x:1,base:22,cls:'castle',art:S(String.raw`
+{id:'castle',name:'Castle',hide:{cx:7,cy:4},price:90,z:1,x:1,base:22,cls:'castle',art:S(String.raw`
   []  []  []
   |_||__||_|
   |        |
@@ -365,7 +405,7 @@ const ITEMS=[
   | |    | |
   |_|____|_|
 `)},
-{id:'cave',name:'Cave',price:60,z:1,x:15,base:22,cls:'cave',art:S(String.raw`
+{id:'cave',name:'Cave',hide:{cx:10,cy:4},price:60,z:1,x:15,base:22,cls:'cave',art:S(String.raw`
      ___----___
    .'  .  ' .  '.
   / .'  _____  '. \
@@ -373,7 +413,7 @@ const ITEMS=[
  |    |       |    |
  |____|_______|____|
 `)},
-{id:'arch',name:'Rock arch',price:55,z:1,x:36,base:22,cls:'arch',art:S(String.raw`
+{id:'arch',name:'Rock arch',pass:{cx:6,cy:3},price:55,z:1,x:36,base:22,cls:'arch',art:S(String.raw`
    .-""""-.
   /  ____  \
  /  /    \  \
@@ -387,7 +427,7 @@ const ITEMS=[
   |  |   |  |
   |  |   |  |
 `)},
-{id:'ship',name:'Shipwreck',price:100,z:1,x:60,base:23,cls:'ship',art:S(String.raw`
+{id:'ship',name:'Shipwreck',hide:{cx:8,cy:4},price:100,z:1,x:60,base:23,cls:'ship',art:S(String.raw`
         |\
    |    | \
    |\   |  \
@@ -406,7 +446,7 @@ const ITEMS=[
  /  o      \
 (___________)
 `)},
-{id:'log',name:'Hollow log',price:40,z:2,x:34,base:23,cls:'log2',art:S(String.raw`
+{id:'log',name:'Hollow log',hide:{cx:7,cy:2},price:40,z:2,x:34,base:23,cls:'log2',art:S(String.raw`
    _________
  .'   ___   '-.__
 (    (   )      |
@@ -537,6 +577,15 @@ function normalize(s){      /* also used when restoring a backup, so it must cop
   const st=d.streak&&typeof d.streak==='object'?d.streak:{};
   d.streak={count:Math.max(0,parseInt(st.count,10)||0),best:Math.max(0,parseInt(st.best,10)||0),lastDay:/^\d{4}-\d{2}-\d{2}$/.test(st.lastDay)?st.lastDay:''};
   d.sound=d.sound!==false;
+  d.haptics=d.haptics!==false;
+  d.play=d.play!==false;
+  d.ambient=!!d.ambient;
+  d.ambientVol=(typeof d.ambientVol==='number'&&isFinite(d.ambientVol))?Math.max(0,Math.min(1,d.ambientVol)):0.5;
+  const wk=d.week&&typeof d.week==='object'?d.week:{};
+  d.week={key:/^\d{4}-\d{2}-\d{2}$/.test(wk.key)?wk.key:'',count:Math.max(0,parseInt(wk.count,10)||0),claimed:!!wk.claimed};
+  const bn=d.bonus&&typeof d.bonus==='object'?d.bonus:{};
+  d.bonus={day:typeof bn.day==='string'?bn.day:'',id:typeof bn.id==='string'?bn.id:''};
+  d.theme=THEMES.some(t=>t.id===d.theme)?d.theme:'ocean';
   const tm=d.timer&&typeof d.timer==='object'?d.timer:{};
   const fm=Math.round((+tm.focusLen||0)/60), focusLen=FOCUS_OPTIONS.includes(fm)?fm*60:1500;
   const mode=['focus','short','long'].includes(tm.mode)?tm.mode:'focus';
@@ -565,7 +614,7 @@ function refreshCosts(){
 /* ---------- daily reset ---------- */
 function checkDay(){
   const k=todayKey();
-  if(state.day!==k){ state.day=k; state.done={}; state.focus={day:k,count:0}; save(); renderTasks(); renderTimer(); say('A new day! Your tasks have reset.'); }
+  if(state.day!==k){ state.day=k; state.done={}; state.focus={day:k,count:0}; ensureBonus(); save(); renderTasks(); renderTimer(); say('A new day! Your tasks have reset.'); }
 }
 function untilReset(){
   const p=lisbonNow(), rem=86400-(p.h*3600+p.m*60+p.s);
@@ -584,10 +633,40 @@ function registerTaskDone(){
   if(MILESTONES[st.count]){ state.points+=MILESTONES[st.count]; msg+=' Milestone bonus +'+MILESTONES[st.count]+' pts!'; }
   return msg;
 }
+function weekKey(){
+  const a=todayKey().split('-').map(Number), d=new Date(Date.UTC(a[0],a[1]-1,a[2]));
+  d.setUTCDate(d.getUTCDate()-((d.getUTCDay()+6)%7));      /* back to Monday */
+  return d.toISOString().slice(0,10);
+}
+function ensureWeek(){ const k=weekKey(); if(state.week.key!==k) state.week={key:k,count:0,claimed:false}; }
+function ensureBonus(){
+  const today=todayKey(), tasks=allTasks();
+  if(state.bonus.day===today&&tasks.some(t=>t.id===state.bonus.id)) return;
+  const pool=tasks.filter(t=>!state.done[t.id]);
+  const pick=(pool.length?pool:tasks)[Math.floor(Math.random()*(pool.length||tasks.length))];
+  state.bonus={day:today,id:pick.id};
+}
+const isBonus=t=>state.bonus.day===todayKey()&&state.bonus.id===t.id;
+const taskPts=t=>t.p*(isBonus(t)?2:1);
 function completeTask(t){
-  state.done[t.id]=true; state.points+=t.p;
-  const extra=registerTaskDone(); save(); sfx('done');
-  return '+'+t.p+' pts for "'+t.n+'". Nice work!'+extra;
+  ensureBonus(); ensureWeek();
+  const pts=taskPts(t), bonus=isBonus(t);
+  state.done[t.id]=true; state.points+=pts;
+  let msg='+'+pts+' pts for "'+t.n+'"'+(bonus?' (daily bonus x2!)':'')+'. Nice work!';
+  state.week.count++;
+  let big=false;
+  if(state.week.count>=WEEK_GOAL&&!state.week.claimed){ state.week.claimed=true; state.points+=WEEK_BONUS; msg+=' Weekly goal reached! +'+WEEK_BONUS+' pts!'; big=true; }
+  msg+=registerTaskDone();
+  save(); sfx(big?'grow':'done');
+  return msg;
+}
+function renderWeekMeta(){
+  ensureWeek(); ensureBonus();
+  const w=state.week, pct=Math.min(100,w.count/WEEK_GOAL*100);
+  $('weekmeta').textContent='Weekly goal: '+bar(pct,12)+' '+Math.min(w.count,WEEK_GOAL)+'/'+WEEK_GOAL+' tasks'
+    +(w.claimed?'  |  reward collected!':'  |  +'+WEEK_BONUS+' pts when you finish')+'  |  resets Monday';
+  const bt=allTasks().find(t=>t.id===state.bonus.id);
+  $('bonusmeta').textContent=bt?(state.done[bt.id]?'Daily bonus collected! A new one appears tomorrow.':'Daily bonus: "'+bt.n+'" is worth double today ('+taskPts(bt)+' pts).'):'';
 }
 function renderStreakMeta(){
   const st=state.streak, cur=currentStreak(), counted=st.lastDay===todayKey();
@@ -600,6 +679,7 @@ function renderStreakMeta(){
 /* ---------- tasks UI ---------- */
 function allTasks(){ return DEFAULT_TASKS.concat(state.custom); }
 function renderTasks(){
+  ensureBonus(); ensureWeek();
   const all=allTasks(),doneN=all.filter(t=>state.done[t.id]).length;
   $('taskmeta').textContent='Today '+doneN+'/'+all.length+' done  |  resets in '+untilReset();
   let h='';
@@ -608,12 +688,12 @@ function renderTasks(){
     all.filter(t=>t.g===g).forEach(t=>{
       const d=!!state.done[t.id], cust=String(t.id).startsWith('c');
       h+='<div class="row"><button type="button" class="task'+(d?' done':'')+'" role="checkbox" aria-checked="'+d+'" data-task="'+esc(t.id)+'">'
-        +'<span class="box">'+(d?'[x]':'[ ]')+'</span><span class="nm">'+esc(t.n)+'</span><span class="p">+'+t.p+'</span></button>'
+        +'<span class="box">'+(d?'[x]':'[ ]')+'</span><span class="nm">'+esc(t.n)+'</span><span class="p">+'+taskPts(t)+(isBonus(t)?'<span class="bonus">BONUS x2</span>':'')+'</span></button>'
         +(cust?'<button type="button" class="del" data-del="'+esc(t.id)+'" aria-label="Remove task '+esc(t.n)+'">x</button>':'')+'</div>';
     });
   });
   $('tasklist').innerHTML=h;
-  renderStreakMeta();
+  renderStreakMeta(); renderWeekMeta();
 }
 $('tasklist').addEventListener('click',e=>{
   const del=e.target.closest('[data-del]');
@@ -645,6 +725,23 @@ const copiesOwned=it=>{ let n=0; for(let k=0;k<=EXPAND_COST.length;k++) if(instK
 const instName=i=>i.it.name+(i.k?' #'+(i.k+1):'');
 
 /* ---------- shop UI ---------- */
+function applyTheme(){
+  const t=THEMES.find(x=>x.id===state.theme)||THEMES[0];
+  if(document.documentElement) document.documentElement.setAttribute('data-theme',t.id);
+  const m=document.querySelector&&document.querySelector('meta[name=theme-color]'); if(m) m.setAttribute('content',t.bg);
+}
+function renderThemes(){
+  $('themelist').innerHTML=THEMES.map(t=>{
+    const cur=state.theme===t.id;
+    return '<button type="button" class="sw'+(cur?' cur':'')+'" data-theme="'+t.id+'" aria-pressed="'+cur+'">'
+      +'<span class="wsw" style="background:linear-gradient(90deg,'+t.bg+' 50%,'+t.accent+' 50%)"></span>'+t.name+'</button>';
+  }).join('');
+}
+$('themelist').addEventListener('click',e=>{
+  const b=e.target.closest('[data-theme]'); if(!b) return;
+  const t=THEMES.find(x=>x.id===b.dataset.theme); if(!t) return;
+  state.theme=t.id; save(); applyTheme(); renderThemes(); say('Theme changed to '+t.name+'.');
+});
 function applyWater(){
   const w=WATERS.find(x=>x.id===state.water)||WATERS[0], el=$('tankwrap');
   el.style.background=w.grad; el.style.setProperty('--bgfar',w.far); el.style.setProperty('--ray',w.ray);
@@ -784,7 +881,8 @@ $('fishlist').addEventListener('click',e=>{
 function updateChips(){
   const all=allTasks(), d=all.filter(t=>state.done[t.id]).length;
   const f=state.fish[selFish]||state.fish[0];
-  $('chip-tasks').textContent=d+'/'+all.length+' done today';
+  ensureWeek();
+  $('chip-tasks').textContent=d+'/'+all.length+' today | week '+Math.min(state.week.count,WEEK_GOAL)+'/'+WEEK_GOAL;
   $('chip-focus').textContent=timerChip();
   $('chip-backup').textContent='';
   const cs=currentStreak(); $('streakchip').innerHTML='Streak <span class="hl">'+cs+' day'+(cs===1?'':'s')+'</span>';
@@ -882,9 +980,10 @@ function hitTest(cx,cy){
   return null;
 }
 tank.addEventListener('pointerdown',e=>{
-  if(!editing) return;
   const r=tank.getBoundingClientRect();
-  const inst=hitTest(Math.floor((e.clientX-r.left)/cellW),Math.floor((e.clientY-r.top)/cellH));
+  const cx=Math.floor((e.clientX-r.left)/cellW), cy=Math.floor((e.clientY-r.top)/cellH);
+  if(!editing){ tapFish(cx,cy); return; }          /* normal mode: tapping a fish startles it */
+  const inst=hitTest(cx,cy);
   if(!inst) return;
   selId=inst.key; refreshEdit();
   const q=itemPos(inst);
@@ -902,28 +1001,42 @@ tank.addEventListener('pointercancel',endDrag);
 
 /* ---------- sound ---------- */
 let actx=null, userActed=false, lastBubbleSnd=0;
-['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,()=>{ userActed=true; },true));
-function audio(){
-  if(!state.sound||!userActed||document.hidden) return null;
+['pointerdown','keydown','touchend','click'].forEach(ev=>document.addEventListener(ev,()=>{ userActed=true; if(state.ambient&&!amb) ambientStart(); else ctx(); },true));
+function ctx(){                       /* one shared audio context, created only after the first tap */
+  if(!userActed) return null;
   try{
     if(!actx){ const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return null; actx=new AC(); }
-    if(actx.state==='suspended') actx.resume();
+    if(actx.state==='suspended'&&!document.hidden) actx.resume();
     return actx;
   }catch(e){ return null; }
 }
+function audio(){ return (!state.sound||document.hidden)?null:ctx(); }
 function tone(c,when,f0,f1,dur,vol,type){
   const o=c.createOscillator(), g=c.createGain(), t=c.currentTime+when;
   o.type=type||'sine'; o.frequency.setValueAtTime(f0,t); o.frequency.exponentialRampToValueAtTime(f1,t+dur);
   g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.012); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
   o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+0.05);
 }
+const canVibrate=typeof navigator!=='undefined'&&typeof navigator.vibrate==='function';
+const HAPTICS={tap:[12],done:[35],buy:[20,40,20],grow:[60,60,60,60,140],timer:[250,120,250,120,500],feed:[15]};
+function haptic(name){
+  if(!state.haptics||!canVibrate||!HAPTICS[name]||document.hidden) return;
+  try{ navigator.vibrate(HAPTICS[name]); }catch(e){}
+}
+function syncHaptics(){
+  $('vibbtn').textContent='Vibration: '+(state.haptics?'on':'off'); $('vibbtn').setAttribute('aria-pressed',state.haptics);
+  $('vibnote').textContent=canVibrate?'':'This device or browser does not support vibration (iPhone does not).';
+}
+$('vibbtn').addEventListener('click',()=>{ state.haptics=!state.haptics; save(); syncHaptics(); haptic('buy'); });
 function sfx(name){
+  haptic(name);
   const c=audio(); if(!c) return;
   try{
     if(name==='bubble'){
       const now=Date.now(); if(now-lastBubbleSnd<700) return; lastBubbleSnd=now;
       const f=380+Math.random()*220; tone(c,0,f,f*(1.9+Math.random()*.5),0.09,0.03);
     } else if(name==='eat'){ tone(c,0,230,560,0.11,0.05); }
+    else if(name==='tap'){ tone(c,0,700,1150,0.07,0.04); }
     else if(name==='done'){ tone(c,0,660,660,0.14,0.05); tone(c,0.12,880,880,0.2,0.05); }
     else if(name==='buy'){ tone(c,0,520,780,0.1,0.05); tone(c,0.09,780,1040,0.12,0.04); }
     else if(name==='grow'){ [523,659,784,1046].forEach((f,i)=>tone(c,i*0.1,f,f,0.18,0.05)); }
@@ -932,6 +1045,59 @@ function sfx(name){
 }
 function syncSound(){ $('soundbtn').textContent='Sound: '+(state.sound?'on':'off'); $('soundbtn').setAttribute('aria-pressed',state.sound); }
 $('soundbtn').addEventListener('click',()=>{ state.sound=!state.sound; save(); syncSound(); if(state.sound) sfx('bubble'); });
+
+/* ---------- ambient underwater sound ---------- */
+let amb=null;
+const ambLevel=()=>0.35*state.ambientVol;
+const ambBase=()=>360+280*daylight;       /* deeper, darker rumble at night */
+function ambientStart(){
+  if(amb||!state.ambient) return;
+  const c=ctx(); if(!c) return;
+  try{
+    /* 6 s of brown noise, cross-faded so the loop has no click */
+    const sr=c.sampleRate, len=Math.floor(sr*6), fade=Math.floor(sr*0.4), buf=c.createBuffer(1,len,sr), d=buf.getChannelData(0);
+    const x=new Float32Array(len+fade); let last=0;
+    for(let i=0;i<x.length;i++){ last=(last+0.02*(Math.random()*2-1))/1.02; x[i]=last*3.5; }
+    for(let i=0;i<len;i++) d[i]=x[i];
+    for(let i=0;i<fade;i++){ const t=i/fade; d[i]=x[i]*t+x[len+i]*(1-t); }
+    const src=c.createBufferSource(); src.buffer=buf; src.loop=true;
+    const lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=ambBase(); lp.Q.value=0.7;
+    const ng=c.createGain(); ng.gain.value=0.7;
+    const master=c.createGain(); master.gain.value=0.0001;
+    src.connect(lp); lp.connect(ng); ng.connect(master); master.connect(c.destination);
+    /* slow swells, like water moving past the glass */
+    const l1=c.createOscillator(); l1.frequency.value=0.07; const l1g=c.createGain(); l1g.gain.value=220; l1.connect(l1g); l1g.connect(lp.frequency);
+    const l2=c.createOscillator(); l2.frequency.value=0.11; const l2g=c.createGain(); l2g.gain.value=0.2; l2.connect(l2g); l2g.connect(ng.gain);
+    /* a soft low hum, a fifth apart */
+    const h1=c.createOscillator(), h2=c.createOscillator(), hg=c.createGain();
+    h1.frequency.value=110; h2.frequency.value=165; hg.gain.value=0.05; h1.connect(hg); h2.connect(hg); hg.connect(master);
+    const l3=c.createOscillator(); l3.frequency.value=0.05; const l3g=c.createGain(); l3g.gain.value=0.02; l3.connect(l3g); l3g.connect(hg.gain);
+    const all=[src,l1,l2,l3,h1,h2]; all.forEach(n=>n.start());
+    master.gain.setTargetAtTime(ambLevel(),c.currentTime,1.2);
+    amb={c:c,master:master,lp:lp,nodes:all};
+  }catch(e){ amb=null; }
+}
+function ambientStop(){
+  if(!amb) return;
+  const a=amb; amb=null;
+  try{
+    a.master.gain.setTargetAtTime(0.0001,a.c.currentTime,0.25);
+    setTimeout(()=>{ a.nodes.forEach(n=>{ try{ n.stop(); }catch(e){} }); try{ a.master.disconnect(); }catch(e){} },1500);
+  }catch(e){}
+}
+function syncPlay(){ $('playbtn').textContent='Hiding & playing: '+(state.play?'on':'off'); $('playbtn').setAttribute('aria-pressed',state.play); }
+$('playbtn').addEventListener('click',()=>{ state.play=!state.play; save(); syncPlay(); say(state.play?'Fish will hide and play again.':'Fish will just swim around.'); });
+function syncAmbient(){
+  $('ambbtn').textContent='Ambient: '+(state.ambient?'on':'off'); $('ambbtn').setAttribute('aria-pressed',state.ambient);
+  $('ambvol').value=String(Math.round(state.ambientVol*100));
+  if(state.ambient) ambientStart(); else ambientStop();
+}
+$('ambbtn').addEventListener('click',()=>{ state.ambient=!state.ambient; save(); syncAmbient(); });
+$('ambvol').addEventListener('input',e=>{
+  state.ambientVol=Math.max(0,Math.min(1,(parseInt(e.target.value,10)||0)/100)); dirty=true;
+  if(amb) amb.master.gain.setTargetAtTime(ambLevel(),amb.c.currentTime,0.1);
+});
+$('ambvol').addEventListener('change',()=>save());
 
 /* ---------- day / night (Lisbon time) ---------- */
 let daylight=1, previewHour=null;
@@ -944,6 +1110,7 @@ function applyDaylight(){
   const phase=daylight>=1?'day':daylight<=0?'night':(h<12?'dawn':'dusk');
   const shown=previewHour===null?p:{h:Math.floor(h),m:Math.round((h%1)*60)};
   $('clock').innerHTML='Lisbon <span class="hl">'+String(shown.h).padStart(2,'0')+':'+String(shown.m).padStart(2,'0')+'</span> - '+phase+(previewHour===null?'':' (preview)');
+  if(amb){ try{ amb.lp.frequency.setTargetAtTime(ambBase(),amb.c.currentTime,2); }catch(e){} }
 }
 $('timepreview').addEventListener('change',e=>{ previewHour=e.target.value===''?null:parseFloat(e.target.value); applyDaylight(); });
 
@@ -1023,7 +1190,7 @@ function decodeSave(text){
 function renderAll(){
   W=BASE_W+state.expand*EXPAND_W; SAND=sandInit(); swimmers.clear(); pellets=[]; queue=0;
   selFish=0; selId=null;
-  applyWater(); renderTasks(); renderShop(); renderFishPanel(); renderTimer(); syncSound(); applyDaylight(); updateHud(); fit();
+  applyTheme(); renderThemes(); applyWater(); renderTasks(); renderShop(); renderFishPanel(); renderTimer(); syncSound(); syncHaptics(); syncPlay(); syncAmbient(); applyDaylight(); updateHud(); fit();
 }
 $('exportbtn').addEventListener('click',()=>{
   save(); $('exportbox').value=encodeSave(); $('copybtn').disabled=false;
@@ -1055,6 +1222,17 @@ $('codeform').addEventListener('submit',e=>{
   if(v==='infpoints'){
     state.points+=9999; save(); updateHud(); sfx('buy');
     msg.textContent='Code accepted: +9999 points!'; say('Code accepted: +9999 points!');
+  } else if(/^grow(?:l)?all[1-5]?$/.test(v)){
+    const n=parseInt(v.slice(-1),10);
+    if(!(n>=1&&n<=5)){ msg.textContent='Add the stage number (1-5) to the end, for example growall3.'; box.value=''; return; }
+    const target=STAGE_XP[n-1];
+    state.fish.forEach(f=>{
+      f.xp=Math.max(f.xp,target);
+      const r=rt(f); for(let i=0;i<10;i++) sparks.push({x:r.x+rnd(-2,8),y:r.y+rnd(-2,4),life:14});
+    });
+    save(); renderFishPanel(); updateHud(); sfx('grow');
+    const ok='Code accepted: every fish is now at least stage '+n+' ('+STAGE_NAME[n-1]+')!';
+    msg.textContent=ok; say(ok);
   } else msg.textContent='That code is not valid.';
   box.value='';
 });
@@ -1093,7 +1271,7 @@ const pelletsAlive=()=>pellets.length+queue;
 const swimmers=new Map();   /* runtime position per fish id (not saved) */
 function rt(f){
   let r=swimmers.get(f.id);
-  if(!r){ r={x:rnd(5,W-18),y:rnd(4,16),dir:Math.random()<.5?1:-1,tx:rnd(5,W-18),ty:rnd(4,16),pause:0}; swimmers.set(f.id,r); }
+  if(!r){ r={x:rnd(5,W-18),y:rnd(4,16),dir:Math.random()<.5?1:-1,tx:rnd(5,W-18),ty:rnd(4,16),pause:0,emote:null,nextEmote:Date.now()+rnd(10000,EMOTE_EVERY[1]),mode:'free',hold:false,nextPlay:Date.now()+rnd(12000,40000)}; swimmers.set(f.id,r); }
   return r;
 }
 
@@ -1106,7 +1284,7 @@ let SAND=sandInit();
 
 $('feed').addEventListener('click',()=>{
   if(state.points<FEED_COST||state.fish.every(f=>f.fullness>=95)) return;
-  state.points-=FEED_COST; queue+=PELLETS; feedCenter=Math.floor(rnd(14,W-16)); save(); updateHud();
+  haptic('feed'); state.points-=FEED_COST; queue+=PELLETS; feedCenter=Math.floor(rnd(14,W-16)); save(); updateHud();
   say('Sprinkling pellets... here they come!');
 });
 
@@ -1115,6 +1293,7 @@ function eat(f,p){
   pellets.splice(idx,1);
   const before=stageOf(f), r=rt(f);
   f.fullness=Math.min(100,f.fullness+7); f.xp+=1; dirty=true; sfx('eat');
+  if(Math.random()<HAPPY_CHANCE) r.emote={text:':D',until:Date.now()+EMOTE_SHOW};
   for(let i=0;i<2;i++) bubbles.push({x:p.x,y:p.y-1,vy:rnd(.15,.3),ch:'o',ph:rnd(0,6)});
   const after=stageOf(f);
   if(after>before){
@@ -1125,20 +1304,121 @@ function eat(f,p){
   updateHud(); save();
 }
 
+/* ---------- hiding and playing ---------- */
+function hideSpots(){
+  return instList().filter(i=>state.owned[i.key]&&(i.it.hide||i.it.pass)).map(i=>{
+    const q=itemPos(i), c=i.it.hide||i.it.pass;
+    return {key:i.key,pass:!!i.it.pass,cx:q.x+c.cx,cy:q.y+c.cy};
+  });
+}
+function managePlay(f,r,F,now){
+  const spots=hideSpots(), homes=spots.filter(s=>!s.pass), w=F.w, br=F.body;
+  const clampT=()=>{ r.tx=Math.max(1,Math.min(W-1-w,r.tx)); r.ty=Math.max(2,Math.min(WATER_BOT-br,r.ty)); };
+  const toward=(cx,cy)=>{ r.tx=cx-w/2; r.ty=cy-br; clampT(); };
+  const arrived=()=>Math.abs(r.x-r.tx)<1.5&&Math.abs(r.y-r.ty)<1.2;
+  /* night: sleep tucked into a cave, castle, log or wreck */
+  if(homes.length&&(daylight<0.25||(r.mode==='sleep'&&daylight<0.5))){
+    if(r.mode!=='sleep'||!homes.some(s=>s.key===r.spot)){
+      const used={}; state.fish.forEach(o=>{ const ro=rt(o); if(o!==f&&ro.mode==='sleep'&&ro.spot) used[ro.spot]=(used[ro.spot]||0)+1; });
+      homes.sort((a,b)=>(used[a.key]||0)-(used[b.key]||0));
+      r.mode='sleep'; r.spot=homes[0].key; r.slot=used[r.spot]||0;
+    }
+    const s=homes.find(x=>x.key===r.spot);
+    toward(s.cx+((r.slot%3)-1)*3,s.cy); r.spd=0.6; r.hold=arrived(); return;
+  }
+  if(r.mode==='sleep'){ r.mode='free'; r.hold=false; r.spot=null; r.nextPlay=now+rnd(10000,30000); }
+  if(r.mode==='visit'){                       /* peek into a hiding place for a few seconds */
+    const s=homes.find(x=>x.key===r.spot);
+    if(!s){ r.mode='free'; r.hold=false; return; }
+    toward(s.cx,s.cy); r.spd=0.7;
+    if(arrived()){
+      r.hold=true; if(!r.stayUntil) r.stayUntil=now+rnd(6000,14000);
+      if(now>=r.stayUntil){ r.mode='free'; r.hold=false; r.stayUntil=0; r.spot=null; r.nextPlay=now+rnd(30000,70000); }
+    }
+    return;
+  }
+  if(r.mode==='pass'){                        /* swim through the rock arch */
+    const p=r.route&&r.route[r.ri];
+    if(!p){ r.mode='free'; r.route=null; r.hold=false; r.nextPlay=now+rnd(30000,70000); return; }
+    toward(p.x,p.y); r.spd=1.0; r.hold=false;
+    if(arrived()) r.ri++;
+    return;
+  }
+  if(r.mode==='chase'){
+    const b=state.fish.find(o=>o.id===r.buddy);
+    if(!b||now>=r.until){ r.mode='free'; r.buddy=null; r.nextPlay=now+rnd(45000,100000); return; }
+    const rb=rt(b); r.tx=rb.x+(r.x<rb.x?-3:3); r.ty=rb.y; clampT(); r.spd=1.0; r.hold=false;
+    return;
+  }
+  if(r.mode==='flee'){
+    if(now>=r.until){ r.mode='free'; r.nextPlay=now+rnd(45000,100000); return; }
+    if(--r.fz<=0||arrived()){ r.fz=Math.floor(rnd(10,18)); r.tx=rnd(2,W-w-2); r.ty=rnd(3,WATER_BOT-br-1); clampT(); }
+    r.spd=1.1; r.hold=false; return;
+  }
+  r.hold=false;
+  if(now>=r.nextPlay){                        /* free: now and then do something fun */
+    r.nextPlay=now+rnd(30000,70000);
+    const others=state.fish.filter(o=>o!==f&&rt(o).mode==='free'&&!(rt(o).scuttle&&now<rt(o).scuttle));
+    const opts=[];
+    if(others.length) opts.push('chase');
+    homes.forEach(s=>opts.push('visit:'+s.key));
+    spots.filter(s=>s.pass).forEach(s=>opts.push('pass:'+s.key));
+    if(!opts.length) return;
+    const o=opts[Math.floor(Math.random()*opts.length)];
+    if(o==='chase'){
+      const b=others[Math.floor(Math.random()*others.length)], rb=rt(b);
+      r.mode='chase'; r.buddy=b.id; r.until=now+8000; rb.mode='flee'; rb.until=now+8000; rb.fz=0; rb.hold=false;
+      r.emote={text:'>:)',until:now+EMOTE_SHOW}; rb.emote={text:'O_o',until:now+EMOTE_SHOW};
+    } else if(o.startsWith('visit:')){ r.mode='visit'; r.spot=o.slice(6); r.stayUntil=0; }
+    else {
+      const s=spots.find(x=>x.key===o.slice(5)), dir=Math.random()<.5?1:-1;
+      r.mode='pass'; r.ri=0; r.route=[{x:s.cx-9*dir,y:s.cy},{x:s.cx+9*dir,y:s.cy}];
+    }
+  }
+}
+function tapFish(cx,cy){
+  let best=null,bd=1e9;
+  state.fish.forEach(f=>{
+    const r=rt(f), F=FISH[stageOf(f)], top=Math.round(r.y);
+    if(cx>=r.x-1.5&&cx<=r.x+F.w+0.5&&cy>=top-1&&cy<=top+F.h){          /* generous hit box so small fish are easy to tap */
+      const d=Math.abs(cx-(r.x+F.w/2))+Math.abs(cy-(top+F.h/2))*2;
+      if(d<bd){ bd=d; best=f; }
+    }
+  });
+  if(!best) return;
+  const r=rt(best), now=Date.now();
+  r.scuttle=now+EMOTE_SHOW; r.zig=0; r.emote={text:'°O°',until:now+EMOTE_SHOW};
+  for(let i=0;i<3;i++) bubbles.push({x:Math.round(r.x+rnd(0,3)),y:Math.round(r.y),vy:rnd(.2,.35),ch:Math.random()<.5?'o':'.',ph:rnd(0,6)});
+  sfx('tap');
+}
 function swim(f){
   const r=rt(f), F=FISH[stageOf(f)], w=F.w, h=F.h, br=F.body;
+  const nowMs=Date.now();
+  const scuttling=!!(r.scuttle&&nowMs<r.scuttle);
+  if(nowMs>=r.nextEmote&&!scuttling){
+    r.emote={text:EMOTES[Math.floor(Math.random()*EMOTES.length)],until:nowMs+EMOTE_SHOW};
+    r.nextEmote=nowMs+rnd(EMOTE_EVERY[0],EMOTE_EVERY[1]);
+  }
+  if(r.emote&&nowMs>=r.emote.until) r.emote=null;
   const lines=r.dir>0?F.R:F.L;
   const hungryMul=f.fullness<20?0.6:1;
   let target=null;
-  if(f.fullness<100 && pellets.length){
+  if(f.fullness<100 && pellets.length && !scuttling){
     const mx=r.x+(r.dir>0?w-1:0), my=r.y+br; let bd=1e9;
     pellets.forEach(p=>{const d=Math.abs(p.x-mx)+Math.abs(p.y-my)*2; if(d<bd){bd=d;target=p;}});
   }
   const ymax=WATER_BOT-br, xmax=W-1-w;
-  if(target){
+  if(target||scuttling||!state.play){          /* feeding, taps and the setting override hiding/playing */
+    if(r.mode!=='free'){ r.mode='free'; r.hold=false; r.route=null; r.spot=null; }
+  } else managePlay(f,r,F,nowMs);
+  if(scuttling){                      /* startled: dart about in short zig-zags */
+    if(--r.zig<=0){ r.zig=Math.floor(rnd(4,8)); r.tx=r.x+rnd(-14,14); r.ty=r.y+rnd(-4,4); }
+    r.pause=0;
+  } else if(target){
     const mx=r.x+(r.dir>0?w-1:0);
     if(target.x>mx+1) r.dir=1; else if(target.x<mx-1) r.dir=-1;
     r.tx=target.x-(r.dir>0?w-1:0); r.ty=target.y-br; r.pause=0;
+  } else if(r.mode&&r.mode!=='free'){ r.pause=0;
   } else if(r.pause>0){ r.pause--; }
   else if(Math.abs(r.tx-r.x)<1.2 && Math.abs(r.ty-r.y)<.8){
     if(Math.random()<.35) r.pause=Math.floor(rnd(8,30));
@@ -1146,9 +1426,10 @@ function swim(f){
   }
   r.tx=Math.max(1,Math.min(xmax,r.tx)); r.ty=Math.max(2,Math.min(ymax,r.ty));
   if(!target && Math.abs(r.tx-r.x)>1.5) r.dir=r.tx>r.x?1:-1;
-  if(!r.pause||target){
-    const sl=target?1:(0.55+0.45*daylight);
-    const sx=(target?1.3:0.42)*hungryMul*sl, sy=(target?0.8:0.15)*hungryMul*sl;
+  if((!r.pause||target)&&!(r.hold&&!target&&!scuttling)){
+    const sp=(r.mode&&r.mode!=='free')?r.spd:0;
+    const sl=(target||scuttling||sp)?1:(0.55+0.45*daylight);
+    const sx=(scuttling?1.7:target?1.3:sp?sp:0.42)*hungryMul*sl, sy=(scuttling?1.0:target?0.8:sp?sp*0.6:0.15)*hungryMul*sl;
     const dx=r.tx-r.x, dy=r.ty-r.y;
     r.x+=Math.max(-sx,Math.min(sx,dx)); r.y+=Math.max(-sy,Math.min(sy,dy));
   }
@@ -1158,7 +1439,7 @@ function swim(f){
     if(Math.abs(mx-target.x)<=1.6 && Math.abs(my-target.y)<=1.2) eat(f,target);
   }
   if(Math.random()<.015){ bubbles.push({x:Math.round(r.x+(r.dir>0?w:-1)),y:Math.round(r.y+br),vy:rnd(.15,.3),ch:'o',ph:rnd(0,6)}); sfx('bubble'); }
-  if(daylight<0.3 && Math.random()<.012) bubbles.push({x:Math.round(r.x+w/2),y:Math.round(r.y)-1,vy:rnd(.08,.16),ch:'z',ph:rnd(0,6)});
+  if(daylight<0.3 && Math.random()<(r.mode==='sleep'&&r.hold?.03:.012)) bubbles.push({x:Math.round(r.x+w/2),y:Math.round(r.y)-1,vy:rnd(.08,.16),ch:'z',ph:rnd(0,6)});
 }
 
 function step(){
@@ -1224,10 +1505,18 @@ function render(){
   shown.filter(i=>i.it.z===3).forEach(drawItem);
   /* names follow their fish */
   labels.forEach(({f,r,F,fy})=>{
-    const chars=Array.from(f.name); if(!chars.length) return;
-    const lx=Math.max(1,Math.min(W-1-chars.length,Math.round(r.x+(F.w-chars.length)/2)));
-    let ly=Math.round(fy)-1; if(ly<2) ly=Math.round(fy)+F.h;
-    chars.forEach((c,i)=>{ if(c!==' ') put(lx+i,ly,c,'fname'); });
+    const chars=Array.from(f.name);
+    const top=Math.round(fy)-1;
+    let ly=top; if(ly<2) ly=Math.round(fy)+F.h;
+    if(chars.length){
+      const lx=Math.max(1,Math.min(W-1-chars.length,Math.round(r.x+(F.w-chars.length)/2)));
+      chars.forEach((c,i)=>{ if(c!==' ') put(lx+i,ly,c,'fname'); });
+    }
+    if(r.emote){                      /* little face above the name (or above the fish if the name is below it) */
+      const e=Array.from(r.emote.text), ex=Math.max(1,Math.min(W-1-e.length,Math.round(r.x+(F.w-e.length)/2)));
+      const ey=Math.max(2,(ly===top&&chars.length)?top-1:top);
+      e.forEach((c,i)=>put(ex+i,ey,c,'emote'));
+    }
   });
   /* pellets */
   pellets.forEach(p=>put(p.x,p.y,p.y>=WATER_BOT?',':'o','pel'));
@@ -1259,12 +1548,14 @@ function fit(){
 }
 window.addEventListener('resize',fit);
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fit);
-document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ checkDay(); renderTasks(); applyDaylight(); timerTick(); } });
+document.addEventListener('visibilitychange',()=>{
+  if(actx){ try{ if(document.hidden) actx.suspend(); else actx.resume(); }catch(e){} }
+  if(!document.hidden){ checkDay(); renderTasks(); applyDaylight(); timerTick(); } });
 window.addEventListener('pagehide',save);
 
 
 /* ---------- go ---------- */
-applyWater(); checkDay(); renderTasks(); renderShop(); renderFishPanel(); renderTimer(); syncSound(); applyDaylight(); updateHud(); fit();
+applyTheme(); renderThemes(); applyWater(); checkDay(); renderTasks(); renderShop(); renderFishPanel(); renderTimer(); syncSound(); syncHaptics(); syncPlay(); syncAmbient(); applyDaylight(); updateHud(); fit();
 say('Welcome! Finish tasks to earn points, then feed your fish to help them grow.');
 setInterval(step,80);
 })();
