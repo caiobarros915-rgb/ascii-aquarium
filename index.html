@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08131c">
+<meta name="description" content="Health and study habits that grow a little ASCII fish.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Aquarium">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ASCII Aquarium – habit fish</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08131c; --panel:#0d202c; --line:#1f4254; --text:#cfe8ef; --dim:#6f93a3;
+  --accent:#5de0e6; --gold:#f5c451; --good:#5fe39a; --warn:#ff8f6b;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--mono);font-size:14px;line-height:1.45}
+.app{max-width:1020px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left))}
+header.top{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;margin-bottom:14px}
+h1{margin:0;font-size:20px;letter-spacing:.04em}
+h1 .fishlogo{color:#ff9f43}
+.sub{color:var(--dim);font-size:12px;margin-top:2px}
+.pts{border:1px solid var(--gold);color:var(--gold);padding:6px 12px;font-weight:700;white-space:nowrap}
+.tankbox{border:1px solid var(--line);background:var(--panel);padding:12px}
+#tankwrap{width:100%;overflow-x:auto;overflow-y:hidden;background:linear-gradient(#0f3047,#08182a 70%,#071420)}
+#tank{margin:0;white-space:pre;font-family:var(--mono);line-height:1.12;color:#8fd3e8;user-select:none}
+.hud{display:grid;grid-template-columns:1fr auto;gap:10px 16px;align-items:center;margin-top:12px}
+@media (max-width:620px){.hud{grid-template-columns:1fr}}
+.stats{white-space:pre;overflow-x:auto;font-size:12.5px;line-height:1.6;padding-bottom:2px}
+.stats b{color:var(--accent)}
+.bar{color:var(--good)} .bar.low{color:var(--warn)} .bar.xp{color:var(--accent)}
+button{font-family:var(--mono);font-size:13px;color:var(--text);background:transparent;border:1px solid var(--line);padding:7px 12px;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.feed{border-color:var(--gold);color:var(--gold);font-weight:700;padding:10px 16px}
+.feed:hover:not(:disabled){border-color:#ffe08a;color:#ffe08a}
+.log{margin:10px 0 0;min-height:1.5em;color:var(--dim);font-size:13px}
+.log::before{content:"> ";color:var(--accent)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px}
+section.panel{border:1px solid var(--line);background:var(--panel);padding:12px 14px}
+section.panel h2{margin:0 0 2px;font-size:15px;color:var(--accent);letter-spacing:.06em}
+.meta{color:var(--dim);font-size:12px;margin-bottom:8px}
+h3{margin:12px 0 4px;font-size:12px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase}
+.row{display:flex;gap:6px;align-items:stretch;margin-bottom:4px}
+.task{flex:1;display:flex;gap:10px;text-align:left;align-items:baseline;padding:7px 10px}
+.task .box{color:var(--dim);white-space:pre}
+.task .nm{flex:1}
+.task .p{color:var(--gold);white-space:nowrap}
+.task.done{border-color:#1d5a3f;color:var(--dim)}
+.task.done .box{color:var(--good)} .task.done .nm{text-decoration:line-through}
+.del{padding:7px 9px;color:var(--dim)}
+form.add{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+input,select{font-family:var(--mono);font-size:13px;color:var(--text);background:#08151f;border:1px solid var(--line);padding:7px 8px}
+input[type=text]{flex:1;min-width:140px}
+.item{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px dotted var(--line)}
+.item:last-child{border-bottom:0}
+.item .nm{flex:1}
+.item .price{color:var(--gold);min-width:64px;text-align:right}
+.item .own{color:var(--good);font-size:12px}
+.item button{padding:4px 10px;min-width:74px}
+/* tank colours */
+.rim{color:#7fb4c6}.wave{color:#6cc7e6}.sand{color:#9c7f4c}
+.wood{color:#b07c4a}.rock{color:#8d9aa7}.plant{color:#4fcf7a}.moss{color:#8bbf3f}
+.coral{color:#ff7a8a}.gold{color:#f5c451}.ship{color:#c09a6c}.castle{color:#bdb6d4}
+.cave{color:#7f8f9f}.bridge{color:#cf9962}.arch{color:#9aa9b8}.vase{color:#6aa7ff}
+.shell{color:#ffc9b8}.pebble{color:#a3afba}.roots{color:#a9744a}.skull{color:#ececec}
+.log2{color:#94643d}.fig{color:#ffb347}
+.eye{color:#fff;font-weight:700}.fname{color:#c9e9f3;opacity:.85}
+.pel{color:#d9a066}.bub{color:#9fe9ff}.bgfar{color:var(--bgfar,#1c4660)}.ray{color:var(--ray,#1b546d)}
+.spark{color:#ffe08a;font-weight:700}
+.sel{color:#ffe08a;font-weight:700}
+/* fish colours */
+.fc-orange{color:#ff9f43}.fc-gold{color:#ffd34d}.fc-pink{color:#ff7eb6}.fc-cyan{color:#4de3f0}
+.fc-lime{color:#9be35a}.fc-violet{color:#b48cff}.fc-red{color:#ff5a5a}.fc-white{color:#f2f2f2}
+.rb0{color:#ff5a5a}.rb1{color:#ffa94d}.rb2{color:#ffe14d}.rb3{color:#5fe39a}.rb4{color:#5ab0ff}.rb5{color:#b48cff}
+.rbtxt{background:linear-gradient(90deg,#ff5a5a,#ffa94d,#ffe14d,#5fe39a,#5ab0ff,#b48cff);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700}
+[hidden]{display:none!important}
+.editbar{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#editctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.editbar .meta{flex-basis:100%;margin:0}
+.editbar .mv{min-width:38px;padding:7px 10px}
+.stage{display:flex;gap:16px;align-items:center;padding:10px 0 10px 10px;border-bottom:1px dotted var(--line);border-left:2px solid transparent}
+.stage:last-child{border-bottom:0}
+.stage pre{margin:0;min-width:130px;color:#ff9f43;font-family:var(--mono);font-size:15px;line-height:1.15;white-space:pre}
+.stage.locked pre{color:#8a7560}
+.stage.now{border-left-color:var(--accent);background:rgba(93,224,230,.06)}
+.stage.now b{color:var(--accent)}
+.stage .meta{margin:0}
+.fcard{border:1px dotted var(--line);padding:10px;margin-top:8px}
+.fhead{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.fhead input{width:12ch;flex:none;min-width:0}
+.fhead .meta{margin:0}
+.swatches{display:flex;flex-wrap:wrap;gap:4px}
+.sw{padding:3px 8px;font-size:12px}
+.sw.cur{border-color:var(--accent);background:rgba(93,224,230,.08)}
+.sw .px{color:var(--gold)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.wsw{display:inline-block;width:2.6ch;height:1em;vertical-align:-2px;margin-right:6px;border:1px solid #3b5f73}
+.tankframe{position:relative}
+#veil{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;transition:background 1.2s}
+.statusbar{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;margin-top:10px;font-size:12px;color:var(--dim)}
+.statusbar .hl{color:var(--text)}
+.statusbar button{padding:3px 10px;font-size:12px;margin-left:auto}
+.bigclock{margin:12px 0;font-size:28px;line-height:1.05;color:var(--accent);text-align:center;font-family:var(--mono);white-space:pre}
+button[aria-pressed=true].modebtn{border-color:var(--accent);color:var(--accent);background:rgba(93,224,230,.08)}
+textarea{width:100%;font-family:var(--mono);font-size:12px;color:var(--text);background:#08151f;border:1px solid var(--line);padding:8px;resize:vertical;margin-bottom:6px}
+textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px;align-items:start}
+.box{border:1px solid var(--line);background:var(--panel);padding:12px 14px}
+.box h2{margin:0 0 8px;font-size:14px;letter-spacing:.06em;color:var(--accent)}
+.box.danger{border-color:#7a2f2f}
+.box.danger h2{color:var(--warn)}
+.dangerbtn{border-color:#a33;color:#ff9a9a}
+.dangerbtn:hover:not(:disabled){border-color:#ff6b6b;color:#ff6b6b}
+.warn{color:#ffb4a0;margin:8px 0;font-size:13px}
+#resetpanel ul{margin:6px 0 6px 18px;padding:0;font-size:13px}
+#resetpanel label{display:block;margin:10px 0 4px;font-size:13px}
+#resetpanel input[type=checkbox]{margin-right:8px;vertical-align:-1px}
+#resetpanel input[type=text]{width:100%;min-width:0}
+form.code{display:flex;gap:6px}
+/* accordion */
+.acc{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+details.panel{border:1px solid var(--line);background:var(--panel)}
+details.panel>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:13px 14px;font-weight:700;color:var(--accent);letter-spacing:.06em;user-select:none}
+details.panel>summary::-webkit-details-marker{display:none}
+details.panel>summary::before{content:"[+]";color:var(--dim);font-weight:400;min-width:3ch}
+details.panel[open]>summary::before{content:"[-]";color:var(--accent)}
+details.panel>summary:hover{background:rgba(93,224,230,.06)}
+details.panel>summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+details.panel[open]>summary{border-bottom:1px dashed var(--line)}
+.chip{margin-left:auto;color:var(--dim);font-weight:400;font-size:12px;letter-spacing:0;text-align:right}
+.pbody{padding:12px 14px 14px}
+#editctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="top">
+    <div>
+      <h1><span class="fishlogo">&gt;&lt;(((o&gt;</span> ASCII AQUARIUM</h1>
+      <div class="sub">tick off health &amp; study habits &rarr; earn points &rarr; feed your fish &amp; decorate the tank</div>
+    </div>
+    <div class="pts" id="pts" aria-live="polite">[ 0 pts ]</div>
+  </header>
+
+  <section class="tankbox" aria-label="Fish tank">
+    <div class="tankframe"><div id="tankwrap"><pre id="tank" role="img" aria-label="Animated ASCII fish tank with fish swimming around"></pre></div><div id="veil" aria-hidden="true"></div></div>
+    <div class="statusbar"><span id="clock"></span><span id="streakchip"></span><button type="button" id="soundbtn" aria-pressed="true">Sound: on</button></div>
+    <div class="hud">
+      <div class="stats" id="stats"></div>
+      <button class="feed" id="feed" type="button">FEED  (5 pts)</button>
+    </div>
+    <p class="log" id="log" aria-live="polite"></p>
+  </section>
+
+  <div class="acc">
+    <details class="panel" id="tasks" name="menu" open>
+      <summary><span class="ttl">DAILY TASKS</span><span class="chip" id="chip-tasks"></span></summary>
+      <div class="pbody">
+        <div class="meta" id="taskmeta"></div>
+        <div class="meta" id="streakmeta"></div>
+        <div id="tasklist"></div>
+        <form class="add" id="addform">
+          <input type="text" id="newname" maxlength="40" placeholder="Add your own task..." aria-label="New task name">
+          <select id="newgroup" aria-label="Group"><option value="health">Health</option><option value="study">Study</option></select>
+          <select id="newpts" aria-label="Points"><option>5</option><option selected>10</option><option>15</option><option>20</option></select>
+          <button type="submit">+ Add</button>
+        </form>
+      </div>
+    </details>
+
+
+    <details class="panel" id="focus" name="menu">
+      <summary><span class="ttl">FOCUS TIMER</span><span class="chip" id="chip-focus"></span></summary>
+      <div class="pbody">
+        <div class="meta">Finish a focus session of 25+ minutes and "One 25-min focus session" is ticked for you. Extra sessions earn +5 pts. Closing this section does not stop the timer.</div>
+        <div class="row" style="flex-wrap:wrap;align-items:center">
+          <button type="button" class="modebtn" id="mode-focus" data-mode="focus" aria-pressed="true">Focus</button>
+          <button type="button" class="modebtn" id="mode-short" data-mode="short" aria-pressed="false">Short break (5)</button>
+          <button type="button" class="modebtn" id="mode-long" data-mode="long" aria-pressed="false">Long break (15)</button>
+          <label for="focuslen" class="meta" style="margin:0 0 0 6px">Focus minutes:</label>
+          <select id="focuslen"><option value="25">25</option><option value="30">30</option><option value="45">45</option><option value="50">50</option></select>
+        </div>
+        <pre class="bigclock" id="timerclock" role="timer" aria-live="off"></pre>
+        <div class="row" style="flex-wrap:wrap;justify-content:center">
+          <button type="button" id="timerstart">Start</button>
+          <button type="button" id="timerreset">Reset</button>
+        </div>
+        <div class="meta" id="timermeta" style="text-align:center;margin-top:8px"></div>
+      </div>
+    </details>
+
+    <details class="panel" id="fishpanel" name="menu">
+      <summary><span class="ttl">YOUR FISH</span><span class="chip" id="chip-fish"></span></summary>
+      <div class="pbody">
+        <div class="meta" id="fishcount"></div>
+        <div class="row"><button type="button" id="buyfish">Buy another fish</button></div>
+        <div id="fishlist"></div>
+      </div>
+    </details>
+
+    <details class="panel" id="shop" name="menu">
+      <summary><span class="ttl">SHOP</span><span class="chip" id="chip-shop"></span></summary>
+      <div class="pbody">
+        <div class="meta">Buy water colours and decorations once, then use or hide them any time.</div>
+        <h3>Tank expansion</h3>
+        <div id="expandbox"></div>
+        <h3>Water colour</h3>
+        <div class="swatches" id="waterlist" role="group" aria-label="Water colour"></div>
+        <h3>Decorations</h3>
+        <div class="row"><button type="button" id="toggleall">Hide all decorations</button></div>
+        <div id="shoplist"></div>
+      </div>
+    </details>
+
+    <details class="panel" id="rearrange" name="menu">
+      <summary><span class="ttl">REARRANGE DECORATIONS</span><span class="chip" id="chip-rearrange"></span></summary>
+      <div class="pbody">
+        <div class="meta" id="edithint"></div>
+        <div id="editctl">
+          <select id="editsel" aria-label="Decoration to move"></select>
+          <button type="button" class="mv" id="leftbtn" aria-label="Move left">&lt;</button>
+          <button type="button" class="mv" id="rightbtn" aria-label="Move right">&gt;</button>
+          <button type="button" class="mv" id="upbtn" aria-label="Move up" hidden>^</button>
+          <button type="button" class="mv" id="downbtn" aria-label="Move down" hidden>v</button>
+          <button type="button" id="resetpos">Reset spot</button>
+        </div>
+      </div>
+    </details>
+
+    <details class="panel" id="stages" name="menu">
+      <summary><span class="ttl">GROWTH STAGES</span><span class="chip" id="chip-stages"></span></summary>
+      <div class="pbody">
+        <div class="meta">Fish grow by eating pellets. Every pellet counts for 1.</div>
+        <div class="row" style="align-items:center;flex-wrap:wrap">
+          <label for="stagefish" class="meta" style="margin:0">Fish:</label>
+          <select id="stagefish"></select>
+        </div>
+                <div id="stagelist"></div>
+      </div>
+    </details>
+
+    <details class="panel" id="backup" name="menu">
+      <summary><span class="ttl">BACKUP &amp; SETTINGS</span><span class="chip" id="chip-backup"></span></summary>
+      <div class="pbody">
+        <div class="meta">Your progress lives in this browser only. Create a backup code now and then, and paste it back here to restore it, for example on a new phone.</div>
+        <h3>Back up</h3>
+        <div class="row"><button type="button" id="exportbtn">Create backup code</button><button type="button" id="copybtn" disabled>Copy</button></div>
+        <textarea id="exportbox" readonly rows="3" aria-label="Backup code" placeholder="Your backup code will appear here"></textarea>
+        <h3>Restore</h3>
+        <textarea id="importbox" rows="3" aria-label="Paste backup code" placeholder="Paste a backup code here"></textarea>
+        <div class="row"><button type="button" id="importbtn">Restore from code</button></div>
+        <div class="meta" id="backupmsg" role="status"></div>
+        <h3>Time of day</h3>
+        <div class="row" style="align-items:center;flex-wrap:wrap">
+          <label for="timepreview" class="meta" style="margin:0">The tank follows Lisbon time. Preview:</label>
+          <select id="timepreview"><option value="">Live (Lisbon)</option><option value="12">Midday</option><option value="19.5">Dusk</option><option value="23">Night</option><option value="6.5">Dawn</option></select>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <footer class="foot">
+    <section class="box" aria-label="Enter a code">
+      <h2>[ ENTER A CODE ]</h2>
+      <form class="code" id="codeform">
+        <input type="text" id="codebox" maxlength="30" placeholder="Type a code..." autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Code">
+        <button type="submit">Redeem</button>
+      </form>
+      <div class="meta" id="codemsg" role="status" style="margin:8px 0 0"></div>
+    </section>
+    <section class="box danger" aria-label="Danger zone">
+      <h2>[ DANGER ZONE ]</h2>
+      <button type="button" class="dangerbtn" id="resetopen">Reset progress...</button>
+      <div id="resetpanel" hidden>
+        <p class="warn"><b>WARNING:</b> this permanently deletes ALL progress saved in this browser:</p>
+        <ul>
+          <li>all your fish, their names, colours and growth</li>
+          <li>all points, decorations, tank expansions and water colours</li>
+          <li>your streak, today's tasks, custom tasks and focus sessions</li>
+        </ul>
+        <p class="warn"><b>There is no undo.</b> If there is any chance you want this back, create a backup code first (Backup &amp; Settings) and keep it somewhere safe.</p>
+        <label><input type="checkbox" id="resetcheck">I understand this cannot be undone</label>
+        <label for="resettype">Type RESET (in capital letters) to continue</label>
+        <input type="text" id="resettype" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <div class="row" style="margin-top:12px;flex-wrap:wrap">
+          <button type="button" id="resetcancel">Cancel, keep my progress</button>
+          <button type="button" class="dangerbtn" id="resetgo" disabled>Delete everything</button>
+        </div>
+        <div class="warn" id="resetmsg" role="alert"></div>
+      </div>
+    </section>
+  </footer>
+</main>
+
+<script>
+(function(){
+'use strict';
+/* ---------- constants ---------- */
+const BASE_W=76,EXPAND_W=24,H=26,SAND_TOP=23,WATER_BOT=22;
+const EXPAND_COST=[120,240];     /* two expansions: each adds width and +1 copy per decoration */
+let W=BASE_W;
+const KEY='ascii-aquarium-v2';   /* v2: fresh start */
+const FEED_COST=5,PELLETS=5,MAX_FISH=5,NAME_MAX=10;
+const FISH_COST=[0,50,100,150,200];            /* price of the fish you buy when you already own 1..4 */
+const DEFAULT_NAMES=['Finn','Bubbles','Pip','Coral','Splash'];
+const FOCUS_OPTIONS=[25,30,45,50];
+const STREAK_MIN=3, MILESTONES={3:15,7:40,14:80,30:200,60:400,100:800};
+const STAGE_XP=[0,25,75,160,300];
+const STAGE_NAME=['Tiny fry','Guppy','Young fish','Big fish','Grand fish'];
+const WATERS=[   /* deliberately dark and muted so fish and decorations stay easy to see */
+ {id:'ocean',name:'Deep ocean',price:0,grad:'linear-gradient(#0f3047,#08182a 70%,#071420)',far:'#1c4660',ray:'#1b546d'},
+ {id:'midnight',name:'Midnight',price:20,grad:'linear-gradient(#0c1030,#080a22 70%,#05071a)',far:'#1d2a5c',ray:'#232f6b'},
+ {id:'lagoon',name:'Lagoon',price:20,grad:'linear-gradient(#0c3a3c,#082a2c 70%,#061c1f)',far:'#1b5a58',ray:'#1f6b66'},
+ {id:'slate',name:'Slate',price:20,grad:'linear-gradient(#222a33,#171d24 70%,#10151a)',far:'#3a4653',ray:'#46556a'},
+ {id:'forest',name:'Forest',price:25,grad:'linear-gradient(#0f3320,#0a2417 70%,#07180f)',far:'#1d5233',ray:'#226040'},
+ {id:'plum',name:'Plum',price:25,grad:'linear-gradient(#2a1238,#1d0c28 70%,#14081c)',far:'#4a2762',ray:'#58307a'},
+ {id:'ember',name:'Ember',price:30,grad:'linear-gradient(#331a10,#24120b 70%,#190c07)',far:'#5a3320',ray:'#6b3d27'},
+ {id:'abyss',name:'Abyss',price:30,grad:'linear-gradient(#101114,#0a0b0d 70%,#050506)',far:'#262a30',ray:'#30353d'}
+];
+const COLORS=[
+ {id:'orange',name:'Orange',price:0},{id:'gold',name:'Gold',price:20},{id:'white',name:'Pearl',price:20},
+ {id:'pink',name:'Pink',price:25},{id:'cyan',name:'Cyan',price:25},{id:'lime',name:'Lime',price:30},
+ {id:'violet',name:'Violet',price:30},{id:'red',name:'Red',price:35},{id:'rainbow',name:'Rainbow',price:80}
+];
+
+const S=s=>s.replace(/^\n/,'').replace(/\n$/,'').split('\n');
+const swapParens=a=>a.map(l=>l.replace(/[()]/g,c=>c==='('?')':'('));
+
+/* ---------- tasks ---------- */
+const DEFAULT_TASKS=[
+ {id:'water',g:'health',n:'Drink 8 glasses of water',p:10},
+ {id:'move',g:'health',n:'Move for 20+ minutes',p:15},
+ {id:'sleep',g:'health',n:'Sleep 7+ hours',p:15},
+ {id:'veg',g:'health',n:'Eat fruit or veg',p:8},
+ {id:'meditate',g:'health',n:'Breathe / meditate 5 min',p:8},
+ {id:'stretch',g:'health',n:'Stretch for 5 minutes',p:5},
+ {id:'eyes',g:'health',n:'20-20-20 eye break',p:5},
+ {id:'focus',g:'study',n:'One 25-min focus session',p:15},
+ {id:'practice',g:'study',n:'Practice problems',p:12},
+ {id:'review',g:'study',n:"Review today's notes",p:10},
+ {id:'read',g:'study',n:'Read 10 pages',p:10},
+ {id:'cards',g:'study',n:'Flashcards',p:8},
+ {id:'phone',g:'study',n:'Phone away while studying',p:8},
+ {id:'plan',g:'study',n:'Plan tomorrow',p:6}
+];
+
+/* ---------- decorations ---------- */
+const ITEMS=[
+{id:'bg',name:'Aquarium background',price:40,bg:true},
+{id:'castle',name:'Castle',price:90,z:1,x:1,base:22,cls:'castle',art:S(String.raw`
+  []  []  []
+  |_||__||_|
+  |        |
+  |  ____  |
+  | |    | |
+  |_|____|_|
+`)},
+{id:'cave',name:'Cave',price:60,z:1,x:15,base:22,cls:'cave',art:S(String.raw`
+     ___----___
+   .'  .  ' .  '.
+  / .'  _____  '. \
+ |.'   /     \   '.|
+ |    |       |    |
+ |____|_______|____|
+`)},
+{id:'arch',name:'Rock arch',price:55,z:1,x:36,base:22,cls:'arch',art:S(String.raw`
+   .-""""-.
+  /  ____  \
+ /  /    \  \
+ | |      | |
+ |_|      |_|
+`)},
+{id:'bridge',name:'Bridge',price:70,z:1,x:48,base:22,cls:'bridge',art:S(String.raw`
+ _.-"""""""-._
+/ |  |   |  | \
+==+==+===+==+==
+  |  |   |  |
+  |  |   |  |
+`)},
+{id:'ship',name:'Shipwreck',price:100,z:1,x:60,base:23,cls:'ship',art:S(String.raw`
+        |\
+   |    | \
+   |\   |  \
+  _|_\__|___\_
+ \  o  o  o   /
+  \__________/
+`)},
+{id:'driftwood',name:'Driftwood',price:20,z:2,x:4,base:23,cls:'wood',art:S(String.raw`
+   __,--~~--.__
+ ,'  ~  ~   ~  '-.
+ '~-.___,..-~ ~--'
+`)},
+{id:'rocks',name:'Rocks',price:15,z:2,x:20,base:23,cls:'rock',art:S(String.raw`
+    ___
+  _/   \__
+ /  o      \
+(___________)
+`)},
+{id:'log',name:'Hollow log',price:40,z:2,x:34,base:23,cls:'log2',art:S(String.raw`
+   _________
+ .'   ___   '-.__
+(    (   )      |
+ '.   '-'    _.-'
+   '---------'
+`)},
+{id:'plants',name:'Aquarium plants',price:25,z:2,x:44,base:23,cls:'plant',anim:true,art:S(String.raw`
+ )   (
+ (   )  )
+ )   (  (
+ (  )   )
+ )  (  (
+  \ | /
+`)},
+{id:'coral',name:'Coral decorations',price:35,z:2,x:54,base:23,cls:'coral',art:S(String.raw`
+   Y   Y
+  \Y/ \Y/
+   \\|//
+    \|/
+     |
+`)},
+{id:'roots',name:'Roots',price:45,z:2,x:24,top:2,cls:'roots',art:S(String.raw`
+ \ \|/ /|/ /
+  \ \|/ /|/
+   )|( )|(
+    | | |
+    ' | '
+      '
+`)},
+{id:'moss',name:'Moss',price:15,z:3,x:2,base:24,cls:'moss',art:S(String.raw`
+ .:;;:.;;:;.:
+;;;;;;;;;;;;;;
+`)},
+{id:'pebbles',name:'Pebbles',price:10,z:3,x:14,base:24,cls:'pebble',art:S(String.raw`
+  .o.    .   o.
+ o.Oo.o.oO.o.O.
+`)},
+{id:'skull',name:'Skull ornament',price:25,z:3,x:30,base:23,cls:'skull',art:S(String.raw`
+  .---.
+ / o o \
+ \  ^  /
+  |vvv|
+`)},
+{id:'shells',name:'Shells',price:15,z:3,x:40,base:24,cls:'shell',art:S(String.raw`
+ (@)   ,w,    (@)
+`)},
+{id:'chest',name:'Treasure chest',price:50,z:3,x:47,base:23,cls:'wood',art:S(String.raw`
+ .-------.
+ |  ___  |
+ |=[_$_]=|
+ '-------'
+`)},
+{id:'figurine',name:'Aquarium figurines',price:35,z:3,x:57,base:23,cls:'fig',art:S(String.raw`
+  _
+ (O)
+ /|\=
+ / \
+`)},
+{id:'vase',name:'Ceramic ornaments',price:30,z:3,x:68,base:23,cls:'vase',art:S(String.raw`
+ (_)
+ / \
+ | |
+ \_/
+`)}
+];
+ITEMS.forEach(it=>{ if(it.art){ it.frames=it.anim?[it.art,swapParens(it.art)]:[it.art]; } });
+
+/* ---------- fish sprites (right-facing; mirrored for left) ---------- */
+const MIR={'(':')',')':'(','<':'>','>':'<','/':'\\','\\':'/','{':'}','}':'{','[':']',']':'['};
+function mirror(lines){
+  const w=Math.max(...lines.map(l=>l.length));
+  return lines.map(l=>l.padEnd(w).split('').reverse().map(c=>MIR[c]||c).join(''));
+}
+const FISH_R=[
+  ['><>'],
+  ['><(o>'],
+  ['   _  ','><((o>','   ~  '],
+  ['    ,_ ','><{(((o>','    ~~ '],
+  ['     ,--. ','><{(((((o> ','     "--" ']
+].map(a=>{const w=Math.max(...a.map(l=>l.length));return a.map(l=>l.padEnd(w));});
+const FISH=FISH_R.map(r=>{
+  let body=0,best=0; r.forEach((l,i)=>{const n=l.trim().length; if(n>best){best=n;body=i;}});
+  return {R:r,L:mirror(r),w:r[0].length,h:r.length,body};
+});
+
+/* ---------- state ---------- */
+/* Everything (daily reset, streak, day/night) follows Portugal time */
+const TZ='Europe/Lisbon';
+const FMT_TIME=new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});
+const FMT_DATE=new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'});
+const todayKey=()=>FMT_DATE.format(new Date());
+const dayBefore=k=>{const a=k.split('-').map(Number);return new Date(Date.UTC(a[0],a[1]-1,a[2]-1)).toISOString().slice(0,10);};
+function lisbonNow(){ const p={}; FMT_TIME.formatToParts(new Date()).forEach(x=>{p[x.type]=x.value;}); return {h:+p.hour,m:+p.minute,s:+p.second}; }
+const modeLenFor=(mode,focusLen)=>mode==='focus'?focusLen:(mode==='short'?300:900);
+const clean=v=>Array.from(String(v).replace(/[\u0000-\u001f\u007f]/g,'')).slice(0,NAME_MAX).join('');
+function load(){
+  let s={};
+  try{const r=localStorage.getItem(KEY); if(r) s=JSON.parse(r)||{};}catch(e){}
+  return normalize(s);
+}
+function normalize(s){      /* also used when restoring a backup, so it must cope with anything */
+  const d={points:15,ts:Date.now(),day:todayKey(),done:{},custom:[],owned:{},pos:{},colors:{orange:true},water:'ocean',waters:{ocean:true},expand:0};
+  if(!s||typeof s!=='object') s={};
+  Object.assign(d,s);
+  d.points=Math.max(0,Math.floor(Number(d.points))||0);
+  ['done','owned','pos','colors','waters'].forEach(k=>{ if(!d[k]||typeof d[k]!=='object'||Array.isArray(d[k])) d[k]={}; });
+  if(!Array.isArray(d.fish)||!d.fish.length){      /* new save, or migrate the single-fish save */
+    d.fish=[{id:'f1',name:'Finn',xp:typeof s.xp==='number'?s.xp:0,fullness:typeof s.fullness==='number'?s.fullness:60,color:'orange'}];
+  }
+  delete d.xp; delete d.fullness;
+  d.colors=Object.assign({orange:true},d.colors);
+  d.waters=Object.assign({ocean:true},d.waters);
+  if(!WATERS.some(w=>w.id===d.water)||!d.waters[d.water]) d.water='ocean';
+  d.fish.forEach((f,i)=>{
+    f.id=f.id||('f'+(i+1)); f.name=clean(f.name||'')||DEFAULT_NAMES[i%5];
+    f.xp=f.xp||0; f.fullness=typeof f.fullness==='number'?f.fullness:60;
+    if(!COLORS.some(c=>c.id===f.color)||!d.colors[f.color]) f.color='orange';
+  });
+  d.fish=d.fish.slice(0,MAX_FISH);
+  d.expand=Math.max(0,Math.min(EXPAND_COST.length,parseInt(d.expand,10)||0));
+  d.custom=(Array.isArray(d.custom)?d.custom:[]).filter(t=>t&&typeof t==='object').slice(0,60).map((t,i)=>({
+    id:'c'+String(t.id!==undefined?t.id:i).replace(/^c/,'').replace(/[^\w-]/g,''),g:t.g==='study'?'study':'health',
+    n:String(t.n||'Task').slice(0,40),p:Math.max(1,Math.min(50,parseInt(t.p,10)||10))}));
+  const okKey=k=>{ const a=String(k).split('#'), it=ITEMS.find(i=>i.id===a[0]); return !!it&&(a.length===1||(!!it.art&&/^\d+$/.test(a[1])&&+a[1]>=1&&+a[1]<=EXPAND_COST.length)); };
+  Object.keys(d.owned).forEach(k=>{ if(okKey(k)) d.owned[k]=!!d.owned[k]; else delete d.owned[k]; });
+  Object.keys(d.pos).forEach(k=>{ const p=d.pos[k]; if(!okKey(k)||!p||typeof p!=='object'){ delete d.pos[k]; return; }
+    const q={}; if(Number.isFinite(p.x)) q.x=Math.round(p.x); if(Number.isFinite(p.y)) q.y=Math.round(p.y); d.pos[k]=q; });
+  const st=d.streak&&typeof d.streak==='object'?d.streak:{};
+  d.streak={count:Math.max(0,parseInt(st.count,10)||0),best:Math.max(0,parseInt(st.best,10)||0),lastDay:/^\d{4}-\d{2}-\d{2}$/.test(st.lastDay)?st.lastDay:''};
+  d.sound=d.sound!==false;
+  const tm=d.timer&&typeof d.timer==='object'?d.timer:{};
+  const fm=Math.round((+tm.focusLen||0)/60), focusLen=FOCUS_OPTIONS.includes(fm)?fm*60:1500;
+  const mode=['focus','short','long'].includes(tm.mode)?tm.mode:'focus';
+  d.timer={mode:mode,focusLen:focusLen,end:Number.isFinite(tm.end)?tm.end:null,
+    left:Math.max(1,Math.min(5400,parseInt(tm.left,10)||modeLenFor(mode,focusLen)))};
+  const fo=d.focus&&typeof d.focus==='object'?d.focus:{};
+  d.focus={day:typeof fo.day==='string'?fo.day:'',count:Math.max(0,parseInt(fo.count,10)||0)};
+  return d;
+}
+let state=load();
+W=BASE_W+state.expand*EXPAND_W;
+{ const mins=(Date.now()-(state.ts||Date.now()))/60000;
+  state.fish.forEach(f=>{f.fullness=Math.max(0,f.fullness-mins*0.25);}); }
+let dirty=true;
+function save(){ state.ts=Date.now(); try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){} dirty=false; }
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function say(m){ $('log').textContent=m; }
+const stageOf=f=>{let s=0;STAGE_XP.forEach((t,i)=>{if(f.xp>=t)s=i;});return s;};
+const colorDef=id=>COLORS.find(c=>c.id===id)||COLORS[0];
+function refreshCosts(){
+  document.querySelectorAll('[data-cost]').forEach(b=>{ b.disabled=state.points<parseInt(b.dataset.cost,10); });
+}
+
+/* ---------- daily reset ---------- */
+function checkDay(){
+  const k=todayKey();
+  if(state.day!==k){ state.day=k; state.done={}; state.focus={day:k,count:0}; save(); renderTasks(); renderTimer(); say('A new day! Your tasks have reset.'); }
+}
+function untilReset(){
+  const p=lisbonNow(), rem=86400-(p.h*3600+p.m*60+p.s);
+  const mins=Math.max(0,Math.ceil(rem/60));
+  return Math.floor(mins/60)+'h '+String(mins%60).padStart(2,'0')+'m';
+}
+
+/* ---------- streaks ---------- */
+function currentStreak(){ const st=state.streak,t=todayKey(); return (st.lastDay===t||st.lastDay===dayBefore(t))?st.count:0; }
+function registerTaskDone(){
+  const t=todayKey(), st=state.streak;
+  if(st.lastDay===t) return '';
+  if(allTasks().filter(x=>state.done[x.id]).length<STREAK_MIN) return '';
+  st.count=(st.lastDay===dayBefore(t))?st.count+1:1; st.lastDay=t; st.best=Math.max(st.best,st.count);
+  let msg=' Streak: '+st.count+' day'+(st.count>1?'s':'')+'!';
+  if(MILESTONES[st.count]){ state.points+=MILESTONES[st.count]; msg+=' Milestone bonus +'+MILESTONES[st.count]+' pts!'; }
+  return msg;
+}
+function completeTask(t){
+  state.done[t.id]=true; state.points+=t.p;
+  const extra=registerTaskDone(); save(); sfx('done');
+  return '+'+t.p+' pts for "'+t.n+'". Nice work!'+extra;
+}
+function renderStreakMeta(){
+  const st=state.streak, cur=currentStreak(), counted=st.lastDay===todayKey();
+  const next=Object.keys(MILESTONES).map(Number).sort((a,b)=>a-b).find(n=>n>cur);
+  $('streakmeta').textContent='Streak: '+cur+' day'+(cur===1?'':'s')+' (best '+st.best+')  |  '
+    +(counted?'today counts!':'finish '+STREAK_MIN+' tasks today to keep it')
+    +(next?'  |  next bonus at '+next+' days (+'+MILESTONES[next]+' pts)':'');
+}
+
+/* ---------- tasks UI ---------- */
+function allTasks(){ return DEFAULT_TASKS.concat(state.custom); }
+function renderTasks(){
+  const all=allTasks(),doneN=all.filter(t=>state.done[t.id]).length;
+  $('taskmeta').textContent='Today '+doneN+'/'+all.length+' done  |  resets in '+untilReset();
+  let h='';
+  [['health','Health'],['study','Study']].forEach(([g,label])=>{
+    h+='<h3>'+label+'</h3>';
+    all.filter(t=>t.g===g).forEach(t=>{
+      const d=!!state.done[t.id], cust=String(t.id).startsWith('c');
+      h+='<div class="row"><button type="button" class="task'+(d?' done':'')+'" role="checkbox" aria-checked="'+d+'" data-task="'+esc(t.id)+'">'
+        +'<span class="box">'+(d?'[x]':'[ ]')+'</span><span class="nm">'+esc(t.n)+'</span><span class="p">+'+t.p+'</span></button>'
+        +(cust?'<button type="button" class="del" data-del="'+esc(t.id)+'" aria-label="Remove task '+esc(t.n)+'">x</button>':'')+'</div>';
+    });
+  });
+  $('tasklist').innerHTML=h;
+  renderStreakMeta();
+}
+$('tasklist').addEventListener('click',e=>{
+  const del=e.target.closest('[data-del]');
+  if(del){ state.custom=state.custom.filter(t=>t.id!==del.dataset.del); save(); renderTasks(); return; }
+  const b=e.target.closest('[data-task]'); if(!b) return;
+  checkDay();
+  const t=allTasks().find(x=>x.id===b.dataset.task); if(!t) return;
+  if(state.done[t.id]){ say('Already done today. It resets at midnight.'); return; }
+  const msg=completeTask(t);
+  renderTasks(); updateHud();
+  say(msg);
+});
+$('addform').addEventListener('submit',e=>{
+  e.preventDefault();
+  const n=$('newname').value.trim(); if(!n) return;
+  state.custom.push({id:'c'+Date.now(),g:$('newgroup').value,n:n,p:parseInt($('newpts').value,10)||10});
+  $('newname').value=''; save(); renderTasks(); say('Task added.');
+});
+
+/* ---------- decoration instances (a decoration can be owned several times once the tank is expanded) ---------- */
+const instKey=(it,k)=>k?it.id+'#'+k:it.id;
+const maxCopies=()=>1+state.expand;
+function instList(){
+  const out=[];
+  ITEMS.forEach(it=>{ if(!it.art) return; for(let k=0;k<=EXPAND_COST.length;k++){ const key=instKey(it,k); if(key in state.owned) out.push({key:key,it:it,k:k}); } });
+  return out;
+}
+const copiesOwned=it=>{ let n=0; for(let k=0;k<=EXPAND_COST.length;k++) if(instKey(it,k) in state.owned) n++; return n; };
+const instName=i=>i.it.name+(i.k?' #'+(i.k+1):'');
+
+/* ---------- shop UI ---------- */
+function applyWater(){
+  const w=WATERS.find(x=>x.id===state.water)||WATERS[0], el=$('tankwrap');
+  el.style.background=w.grad; el.style.setProperty('--bgfar',w.far); el.style.setProperty('--ray',w.ray);
+}
+function renderWater(){
+  $('waterlist').innerHTML=WATERS.map(w=>{
+    const own=!!state.waters[w.id], cur=state.water===w.id;
+    return '<button type="button" class="sw'+(cur?' cur':'')+'" data-water="'+w.id+'" aria-pressed="'+cur+'"'
+      +(own?'':' data-cost="'+w.price+'"'+(state.points<w.price?' disabled':''))+'>'
+      +'<span class="wsw" style="background:'+w.grad+'"></span>'+w.name+(own?'':' <span class="px">'+w.price+'</span>')+'</button>';
+  }).join('');
+}
+$('waterlist').addEventListener('click',e=>{
+  const b=e.target.closest('[data-water]'); if(!b) return;
+  const w=WATERS.find(x=>x.id===b.dataset.water); if(!w) return;
+  if(!state.waters[w.id]){
+    if(state.points<w.price) return;
+    state.points-=w.price; state.waters[w.id]=true; sfx('buy'); say('Unlocked '+w.name+' water!');
+  } else say('Water colour changed to '+w.name+'.');
+  state.water=w.id; save(); applyWater(); renderWater(); updateHud();
+});
+function renderExpand(){
+  const lvl=state.expand, cost=EXPAND_COST[lvl];
+  $('expandbox').innerHTML='<div class="meta">Tank size: '+(W-2)+' x '+(H-2)+'  |  expansion '+lvl+'/'+EXPAND_COST.length
+    +'  |  you can own up to '+maxCopies()+' of each decoration. On small screens a wide tank scrolls sideways.</div>'
+    +(cost===undefined?'<button type="button" disabled>Tank fully expanded</button>'
+      :'<button type="button" data-expand="1" data-cost="'+cost+'"'+(state.points<cost?' disabled':'')+'>Expand tank: +'+EXPAND_W+' columns and +1 copy of every decoration  ('+cost+' pts)</button>');
+}
+$('expandbox').addEventListener('click',e=>{
+  const b=e.target.closest('[data-expand]'); if(!b) return;
+  const cost=EXPAND_COST[state.expand]; if(cost===undefined||state.points<cost) return;
+  state.points-=cost; state.expand++; W=BASE_W+state.expand*EXPAND_W; SAND=sandInit();
+  save(); renderShop(); updateHud(); fit();
+  sfx('buy'); say('Tank expanded! There is more room on the right, and you can now own '+maxCopies()+' of each decoration.');
+});
+function ownedRow(name,key){
+  const on=state.owned[key];
+  return '<div class="item"><span class="nm">'+name+'</span><span class="own">'+(on?'placed':'hidden')+'</span><button type="button" data-toggle="'+key+'">'+(on?'Hide':'Show')+'</button></div>';
+}
+function buyRow(name,key,price){
+  return '<div class="item"><span class="nm">'+name+'</span><span class="price">'+price+' pts</span><button type="button" data-buy="'+key+'" data-cost="'+price+'"'+(state.points<price?' disabled':'')+'>Buy</button></div>';
+}
+function renderShop(){
+  renderWater(); renderExpand();
+  $('shoplist').innerHTML=ITEMS.map(it=>{
+    if(!it.art) return (it.id in state.owned)?ownedRow(it.name,it.id):buyRow(it.name,it.id,it.price);
+    const n=copiesOwned(it); let h='';
+    for(let k=0;k<n;k++) h+=ownedRow(it.name+(k?' #'+(k+1):''),instKey(it,k));
+    if(n===0) h+=buyRow(it.name,it.id,it.price);
+    else if(n<maxCopies()) h+=buyRow(it.name+' #'+(n+1)+' (extra copy)',instKey(it,n),it.price);
+    return h;
+  }).join('');
+  updateToggleAll(); refreshEdit();
+}
+function updateToggleAll(){
+  const ids=Object.keys(state.owned), b=$('toggleall');
+  b.disabled=!ids.length;
+  b.textContent=ids.length&&!ids.some(k=>state.owned[k])?'Show all decorations':'Hide all decorations';
+}
+$('toggleall').addEventListener('click',()=>{
+  const ids=Object.keys(state.owned); if(!ids.length) return;
+  const show=!ids.some(k=>state.owned[k]);
+  ids.forEach(k=>{state.owned[k]=show;});
+  save(); renderShop(); say(show?'All decorations shown.':'All decorations hidden.');
+});
+$('shoplist').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.buy){
+    const key=b.dataset.buy, parts=key.split('#'), it=ITEMS.find(i=>i.id===parts[0]), k=parts[1]?parseInt(parts[1],10):0;
+    if(!it||key in state.owned||state.points<it.price) return;
+    if(k>0&&(k>=maxCopies()||!(instKey(it,k-1) in state.owned))) return;
+    state.points-=it.price; state.owned[key]=true; save(); updateHud(); renderShop();
+    sfx('buy'); say('Bought '+it.name+(k?' #'+(k+1):'')+'! It has been added to the tank.');
+  } else if(b.dataset.toggle){
+    state.owned[b.dataset.toggle]=!state.owned[b.dataset.toggle]; save(); renderShop();
+  }
+});
+
+/* ---------- fish panel: buy fish, names, colours ---------- */
+let selFish=0;
+function nextFishCost(){ return state.fish.length<MAX_FISH?FISH_COST[state.fish.length]:null; }
+function renderFishPanel(){
+  const n=state.fish.length, cost=nextFishCost();
+  $('fishcount').textContent='Fish in tank: '+n+'/'+MAX_FISH+'  |  names up to '+NAME_MAX+' characters. Colours are bought once and work for every fish.';
+  const bf=$('buyfish');
+  if(cost===null){ bf.textContent='Tank is full ('+MAX_FISH+'/'+MAX_FISH+' fish)'; bf.disabled=true; bf.removeAttribute('data-cost'); }
+  else { bf.textContent='Buy fish #'+(n+1)+'  ('+cost+' pts)'; bf.dataset.cost=cost; bf.disabled=state.points<cost; }
+  $('fishlist').innerHTML=state.fish.map((f,i)=>{
+    const sw=COLORS.map(c=>{
+      const own=!!state.colors[c.id], cur=f.color===c.id;
+      const label=c.id==='rainbow'?'<span class="rbtxt">&gt;&lt;&gt; '+c.name+'</span>':'<span class="fc-'+c.id+'">&gt;&lt;&gt; '+c.name+'</span>';
+      return '<button type="button" class="sw'+(cur?' cur':'')+'" data-color="'+c.id+'" data-fish="'+i+'" aria-pressed="'+cur+'"'
+        +(own?'':' data-cost="'+c.price+'"'+(state.points<c.price?' disabled':''))+'>'+label+(own?'':' <span class="px">'+c.price+'</span>')+'</button>';
+    }).join('');
+    return '<div class="fcard"><div class="fhead"><label class="sr" for="fn'+i+'">Name of fish '+(i+1)+'</label>'
+      +'<input type="text" id="fn'+i+'" data-name="'+i+'" maxlength="'+NAME_MAX+'" value="'+esc(f.name)+'" autocomplete="off">'
+      +'<span class="meta">'+STAGE_NAME[stageOf(f)]+'</span></div>'
+      +'<div class="swatches" role="group" aria-label="Colour for '+esc(f.name)+'">'+sw+'</div></div>';
+  }).join('');
+  renderStageSelect();
+}
+$('buyfish').addEventListener('click',()=>{
+  const cost=nextFishCost(); if(cost===null||state.points<cost) return;
+  const i=state.fish.length;
+  const used=new Set(state.fish.map(f=>f.name));
+  let name=DEFAULT_NAMES.find(n=>!used.has(n))||('Fish'+(i+1));
+  state.points-=cost;
+  state.fish.push({id:'f'+Date.now(),name:name,xp:0,fullness:60,color:'orange'});
+  save(); renderFishPanel(); updateHud(); renderStages();
+  sfx('buy'); say('Welcome, '+name+'! Give your new fish a name in the Your Fish panel.');
+});
+$('fishlist').addEventListener('input',e=>{
+  const t=e.target; if(t.dataset.name===undefined) return;
+  const f=state.fish[+t.dataset.name]; if(!f) return;
+  const v=clean(t.value); if(v) f.name=v; dirty=true;
+});
+$('fishlist').addEventListener('change',e=>{
+  const t=e.target; if(t.dataset.name===undefined) return;
+  const i=+t.dataset.name, f=state.fish[i]; if(!f) return;
+  const v=clean(t.value.trim());
+  f.name=v||DEFAULT_NAMES[i%5]; t.value=f.name;
+  save(); renderStageSelect(); updateHud(); say('Your fish is now called '+f.name+'.');
+});
+$('fishlist').addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.dataset.name!==undefined) e.target.blur(); });
+$('fishlist').addEventListener('click',e=>{
+  const b=e.target.closest('[data-color]'); if(!b) return;
+  const f=state.fish[+b.dataset.fish], c=colorDef(b.dataset.color); if(!f) return;
+  if(!state.colors[c.id]){
+    if(state.points<c.price) return;
+    state.points-=c.price; state.colors[c.id]=true;
+    sfx('buy'); say('Unlocked '+c.name+'! '+f.name+' is now '+c.name.toLowerCase()+'.');
+  } else say(f.name+' is now '+c.name.toLowerCase()+'.');
+  f.color=c.id; save(); renderFishPanel(); updateHud();
+});
+
+/* ---------- section summaries ---------- */
+function updateChips(){
+  const all=allTasks(), d=all.filter(t=>state.done[t.id]).length;
+  const f=state.fish[selFish]||state.fish[0];
+  $('chip-tasks').textContent=d+'/'+all.length+' done today';
+  $('chip-focus').textContent=timerChip();
+  $('chip-backup').textContent='';
+  const cs=currentStreak(); $('streakchip').innerHTML='Streak <span class="hl">'+cs+' day'+(cs===1?'':'s')+'</span>';
+  $('chip-fish').textContent=state.fish.length+'/'+MAX_FISH+' fish';
+  $('chip-shop').textContent=Object.keys(state.owned).length+' owned | tank '+(state.expand+1)+'/'+(EXPAND_COST.length+1);
+  $('chip-rearrange').textContent=editing?'editing on':'';
+  $('chip-stages').textContent=f.name+': '+STAGE_NAME[stageOf(f)];
+}
+
+/* ---------- HUD ---------- */
+const bar=(p,n)=>{const k=Math.max(0,Math.min(n,Math.round(p/100*n)));return '['+'#'.repeat(k)+'-'.repeat(n-k)+']';};
+function updateHud(){
+  if(stageKey()!==lastStageKey) renderStages();
+  updateChips();
+  $('pts').textContent='[ '+state.points+' pts ]';
+  $('stats').innerHTML=state.fish.map(f=>{
+    const st=stageOf(f),next=STAGE_XP[st+1],b=Math.round(f.fullness);
+    const grow=next===undefined?'MAX':f.xp+'/'+next;
+    return '<b>'+esc(f.name.padEnd(NAME_MAX))+'</b> '+STAGE_NAME[st].padEnd(10)+' belly <span class="bar'+(b<30?' low':'')+'">'+bar(b,10)+'</span> '
+      +String(b).padStart(3)+'%  grow <span class="bar xp">'+grow+'</span>'+(b<15?'  <span class="bar low">hungry!</span>':'');
+  }).join('\n');
+  const fb=$('feed'), allFull=state.fish.every(f=>f.fullness>=95);
+  fb.disabled=allFull||state.points<FEED_COST||pelletsAlive()>=PELLETS*2;
+  fb.textContent=allFull?'Everyone is full':(state.points<FEED_COST?'Need '+FEED_COST+' pts to feed':'FEED  ('+FEED_COST+' pts)');
+  refreshCosts();
+}
+
+/* ---------- growth stages panel ---------- */
+let lastStageKey='';
+const stageKey=()=>{const f=state.fish[selFish]||state.fish[0];return selFish+':'+f.xp+':'+state.fish.length;};
+function renderStageSelect(){
+  if(selFish>=state.fish.length) selFish=0;
+  $('stagefish').innerHTML=state.fish.map((f,i)=>'<option value="'+i+'"'+(i===selFish?' selected':'')+'>'+esc(f.name)+'</option>').join('');
+  lastStageKey='';
+}
+function renderStages(){
+  if(selFish>=state.fish.length) selFish=0;
+  const f=state.fish[selFish], cur=stageOf(f); lastStageKey=stageKey();
+  $('stagelist').innerHTML=FISH.map((F,i)=>{
+    const status=i===cur?'current stage ('+f.xp+' pellets eaten)':(i<cur?'reached':'unlocks at '+STAGE_XP[i]+' pellets ('+(STAGE_XP[i]-f.xp)+' to go)');
+    return '<div class="stage'+(i===cur?' now':'')+(i>cur?' locked':'')+'"><pre aria-hidden="true">'+esc(F.R.map(l=>l.replace(/\s+$/,'')).join('\n'))+'</pre>'
+      +'<div><b>'+(i+1)+'. '+STAGE_NAME[i]+'</b><div class="meta">'+status+'</div></div></div>';
+  }).join('');
+}
+$('stagefish').addEventListener('change',e=>{ selFish=+e.target.value||0; renderStages(); });
+
+/* ---------- rearranging decorations ---------- */
+const tank=$('tank');
+let editing=false,selId=null,cellW=8,cellH=9,drag=null;
+const itemW=it=>Math.max(...it.frames[0].map(l=>l.length));
+const itemH=it=>it.frames[0].length;
+const isFree=it=>it.top!==undefined;   /* only free items can move vertically (roots); the rest sit on the sand */
+function defaultX(inst){
+  const it=inst.it; if(!inst.k) return it.x;
+  return 1+Math.round((it.x*1.3+30*inst.k)%Math.max(1,W-itemW(it)-2));   /* spread extra copies into the wider tank */
+}
+function itemPos(inst){
+  const it=inst.it, p=state.pos[inst.key]||{}, h=itemH(it);
+  const x=Math.max(1,Math.min(W-1-itemW(it),p.x!==undefined?p.x:defaultX(inst)));
+  const y=isFree(it)?Math.max(2,Math.min(WATER_BOT-h+1,p.y!==undefined?p.y:it.top)):it.base-h+1;
+  return {x,y};
+}
+function setPos(inst,x,y){
+  state.pos[inst.key]={x:x,y:y};
+  const q=itemPos(inst);
+  state.pos[inst.key]=isFree(inst.it)?{x:q.x,y:q.y}:{x:q.x};
+  dirty=true;
+}
+const movable=()=>instList().filter(i=>state.owned[i.key]);
+const selItem=()=>instList().find(i=>i.key===selId);
+function refreshEdit(){
+  const list=movable();
+  if(!list.some(i=>i.key===selId)) selId=list.length?list[0].key:null;
+  $('editsel').innerHTML=list.map(i=>'<option value="'+i.key+'"'+(i.key===selId?' selected':'')+'>'+instName(i)+'</option>').join('');
+  const inst=selItem(), free=!!(inst&&isFree(inst.it));
+  $('upbtn').hidden=$('downbtn').hidden=!free;
+  $('edithint').textContent=list.length
+    ?'Drag a decoration in the tank, or pick one below and use the arrows. Most decorations sit on the sand, so they only slide left and right. Closing this section stops rearranging.'
+    :'Buy and show a decoration first, then you can move it.';
+  tank.style.touchAction=editing?'none':''; tank.style.cursor=editing?'grab':'';
+  updateChips();
+}
+$('rearrange').addEventListener('toggle',()=>{ editing=$('rearrange').open; if(!editing) save(); refreshEdit(); updateChips(); });
+$('editsel').addEventListener('change',e=>{ selId=e.target.value; refreshEdit(); });
+function nudge(dx,dy){ const inst=selItem(); if(!inst) return; const q=itemPos(inst); setPos(inst,q.x+dx,q.y+dy); save(); }
+$('leftbtn').addEventListener('click',()=>nudge(-2,0));
+$('rightbtn').addEventListener('click',()=>nudge(2,0));
+$('upbtn').addEventListener('click',()=>nudge(0,-1));
+$('downbtn').addEventListener('click',()=>nudge(0,1));
+$('resetpos').addEventListener('click',()=>{ const inst=selItem(); if(!inst) return; delete state.pos[inst.key]; save(); say(instName(inst)+' is back in its original spot.'); });
+function hitTest(cx,cy){
+  const list=movable().sort((a,b)=>b.it.z-a.it.z);
+  for(const i of list){ const q=itemPos(i),fr=i.it.frames[0],r=cy-q.y,c=cx-q.x; if(r>=0&&r<fr.length&&c>=0&&fr[r][c]&&fr[r][c]!==' ') return i; }
+  for(const i of list){ const q=itemPos(i); if(cy>=q.y&&cy<q.y+itemH(i.it)&&cx>=q.x&&cx<q.x+itemW(i.it)) return i; }
+  return null;
+}
+tank.addEventListener('pointerdown',e=>{
+  if(!editing) return;
+  const r=tank.getBoundingClientRect();
+  const inst=hitTest(Math.floor((e.clientX-r.left)/cellW),Math.floor((e.clientY-r.top)/cellH));
+  if(!inst) return;
+  selId=inst.key; refreshEdit();
+  const q=itemPos(inst);
+  drag={it:inst,sx:e.clientX,sy:e.clientY,x:q.x,y:q.y};
+  try{tank.setPointerCapture(e.pointerId);}catch(_){}
+  tank.style.cursor='grabbing'; e.preventDefault();
+});
+tank.addEventListener('pointermove',e=>{
+  if(!drag) return;
+  setPos(drag.it,drag.x+Math.round((e.clientX-drag.sx)/cellW),drag.y+Math.round((e.clientY-drag.sy)/cellH));
+});
+const endDrag=()=>{ if(drag){ drag=null; save(); tank.style.cursor=editing?'grab':''; } };
+tank.addEventListener('pointerup',endDrag);
+tank.addEventListener('pointercancel',endDrag);
+
+/* ---------- sound ---------- */
+let actx=null, userActed=false, lastBubbleSnd=0;
+['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,()=>{ userActed=true; },true));
+function audio(){
+  if(!state.sound||!userActed||document.hidden) return null;
+  try{
+    if(!actx){ const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return null; actx=new AC(); }
+    if(actx.state==='suspended') actx.resume();
+    return actx;
+  }catch(e){ return null; }
+}
+function tone(c,when,f0,f1,dur,vol,type){
+  const o=c.createOscillator(), g=c.createGain(), t=c.currentTime+when;
+  o.type=type||'sine'; o.frequency.setValueAtTime(f0,t); o.frequency.exponentialRampToValueAtTime(f1,t+dur);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.012); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+0.05);
+}
+function sfx(name){
+  const c=audio(); if(!c) return;
+  try{
+    if(name==='bubble'){
+      const now=Date.now(); if(now-lastBubbleSnd<700) return; lastBubbleSnd=now;
+      const f=380+Math.random()*220; tone(c,0,f,f*(1.9+Math.random()*.5),0.09,0.03);
+    } else if(name==='eat'){ tone(c,0,230,560,0.11,0.05); }
+    else if(name==='done'){ tone(c,0,660,660,0.14,0.05); tone(c,0.12,880,880,0.2,0.05); }
+    else if(name==='buy'){ tone(c,0,520,780,0.1,0.05); tone(c,0.09,780,1040,0.12,0.04); }
+    else if(name==='grow'){ [523,659,784,1046].forEach((f,i)=>tone(c,i*0.1,f,f,0.18,0.05)); }
+    else if(name==='timer'){ [784,988,1175].forEach((f,i)=>tone(c,i*0.22,f,f,0.3,0.06)); }
+  }catch(e){}
+}
+function syncSound(){ $('soundbtn').textContent='Sound: '+(state.sound?'on':'off'); $('soundbtn').setAttribute('aria-pressed',state.sound); }
+$('soundbtn').addEventListener('click',()=>{ state.sound=!state.sound; save(); syncSound(); if(state.sound) sfx('bubble'); });
+
+/* ---------- day / night (Lisbon time) ---------- */
+let daylight=1, previewHour=null;
+const daylightAt=h=>(h>=8&&h<18)?1:(h>=5&&h<8)?(h-5)/3:(h>=18&&h<21)?1-(h-18)/3:0;
+function applyDaylight(){
+  const p=lisbonNow(), live=p.h+p.m/60+p.s/3600, h=previewHour===null?live:previewHour;
+  daylight=daylightAt(h);
+  const ds=daylight*daylight*(3-2*daylight), alpha=0.46*(1-ds), warm=Math.max(0,1-Math.abs(ds-0.5)*2.4)*0.14;
+  $('veil').style.background='linear-gradient(rgba(255,150,70,'+warm.toFixed(3)+'),rgba(255,150,70,'+warm.toFixed(3)+')),rgba(4,8,28,'+alpha.toFixed(3)+')';
+  const phase=daylight>=1?'day':daylight<=0?'night':(h<12?'dawn':'dusk');
+  const shown=previewHour===null?p:{h:Math.floor(h),m:Math.round((h%1)*60)};
+  $('clock').innerHTML='Lisbon <span class="hl">'+String(shown.h).padStart(2,'0')+':'+String(shown.m).padStart(2,'0')+'</span> - '+phase+(previewHour===null?'':' (preview)');
+}
+$('timepreview').addEventListener('change',e=>{ previewHour=e.target.value===''?null:parseFloat(e.target.value); applyDaylight(); });
+
+/* ---------- focus timer ---------- */
+const DIG={'0':[' _ ','| |','|_|'],'1':['   ','  |','  |'],'2':[' _ ',' _|','|_ '],'3':[' _ ',' _|',' _|'],'4':['   ','|_|','  |'],
+  '5':[' _ ','|_ ',' _|'],'6':[' _ ','|_ ','|_|'],'7':[' _ ','  |','  |'],'8':[' _ ','|_|','|_|'],'9':[' _ ','|_|',' _|'],':':['   ',' o ',' o ']};
+const MODE_LABEL={focus:'Focus',short:'Short break',long:'Long break'};
+const modeLen=m=>modeLenFor(m,state.timer.focusLen);
+const timerLeft=()=>{ const t=state.timer; return t.end?Math.max(0,Math.ceil((t.end-Date.now())/1000)):t.left; };
+const fmtTime=sec=>String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');
+const focusToday=()=>state.focus.day===todayKey()?state.focus.count:0;
+function timerChip(){ const t=state.timer; return t.end?(MODE_LABEL[t.mode]+' '+fmtTime(timerLeft())):(t.left<modeLen(t.mode)?'paused '+fmtTime(t.left):'ready'); }
+function updateTimerDisplay(){
+  const big=fmtTime(timerLeft()).split('');
+  $('timerclock').textContent=[0,1,2].map(r=>big.map(c=>DIG[c][r]).join(' ')).join('\n');
+  $('chip-focus').textContent=timerChip();
+}
+function renderTimer(){
+  const t=state.timer, running=!!t.end;
+  ['focus','short','long'].forEach(m=>$('mode-'+m).setAttribute('aria-pressed',t.mode===m));
+  $('timerstart').textContent=running?'Pause':(t.left<modeLen(t.mode)?'Resume':'Start');
+  $('focuslen').value=String(t.focusLen/60); $('focuslen').disabled=running;
+  $('timermeta').textContent=MODE_LABEL[t.mode]+'  |  focus sessions today: '+focusToday()+(running?'  |  running':'');
+  updateTimerDisplay();
+}
+['focus','short','long'].forEach(m=>$('mode-'+m).addEventListener('click',()=>{
+  const t=state.timer; if(t.end){ say('Pause the timer first to change mode.'); return; }
+  t.mode=m; t.left=modeLen(m); save(); renderTimer();
+}));
+$('focuslen').addEventListener('change',e=>{
+  const t=state.timer; if(t.end) return;
+  t.focusLen=(parseInt(e.target.value,10)||25)*60; if(t.mode==='focus') t.left=t.focusLen; save(); renderTimer();
+});
+$('timerstart').addEventListener('click',()=>{
+  const t=state.timer;
+  if(t.end){ t.left=timerLeft(); t.end=null; }
+  else { if(t.left<=0) t.left=modeLen(t.mode); t.end=Date.now()+t.left*1000; }
+  save(); renderTimer();
+});
+$('timerreset').addEventListener('click',()=>{ const t=state.timer; t.end=null; t.left=modeLen(t.mode); save(); renderTimer(); });
+function finishTimer(){
+  const t=state.timer, was=t.mode; let msg, next;
+  t.end=null;
+  if(was==='focus'){
+    const today=todayKey(); if(state.focus.day!==today) state.focus={day:today,count:0};
+    state.focus.count++;
+    const task=allTasks().find(x=>x.id==='focus');
+    if(task&&!state.done[task.id]&&t.focusLen>=1500) msg='Focus session complete! '+completeTask(task);
+    else if(t.focusLen>=1500){ state.points+=5; msg='Focus session complete! +5 pts.'; }
+    else msg='Focus session complete!';
+    next=(state.focus.count%4===0)?'long':'short';
+  } else { msg='Break over. Ready for another focus session?'; next='focus'; }
+  t.mode=next; t.left=modeLen(next);
+  sfx('timer'); save(); renderTasks(); updateHud(); renderTimer(); say(msg);
+}
+function timerTick(){
+  const t=state.timer;
+  if(t.end&&Date.now()>=t.end){ finishTimer(); return; }
+  updateTimerDisplay();
+}
+
+/* ---------- backup ---------- */
+const BACKUP_PREFIX='ASCIIAQ1:';
+function encodeSave(){
+  const bytes=new TextEncoder().encode(JSON.stringify(state));
+  let bin=''; bytes.forEach(b=>{ bin+=String.fromCharCode(b); });
+  return BACKUP_PREFIX+btoa(bin);
+}
+function decodeSave(text){
+  const t=String(text).trim();
+  if(!t.startsWith(BACKUP_PREFIX)) throw new Error('prefix');
+  const bin=atob(t.slice(BACKUP_PREFIX.length).replace(/\s+/g,''));
+  const obj=JSON.parse(new TextDecoder().decode(Uint8Array.from(bin,c=>c.charCodeAt(0))));
+  if(!obj||typeof obj!=='object'||!Array.isArray(obj.fish)||!obj.fish.length) throw new Error('shape');
+  return obj;
+}
+function renderAll(){
+  W=BASE_W+state.expand*EXPAND_W; SAND=sandInit(); swimmers.clear(); pellets=[]; queue=0;
+  selFish=0; selId=null;
+  applyWater(); renderTasks(); renderShop(); renderFishPanel(); renderTimer(); syncSound(); applyDaylight(); updateHud(); fit();
+}
+$('exportbtn').addEventListener('click',()=>{
+  save(); $('exportbox').value=encodeSave(); $('copybtn').disabled=false;
+  $('backupmsg').textContent='Backup code created. Copy it somewhere safe (a note to yourself works well).';
+});
+$('copybtn').addEventListener('click',()=>{
+  const box=$('exportbox');
+  const manual=()=>{ try{ box.focus(); box.select(); }catch(e){} $('backupmsg').textContent='Could not copy automatically. The code is selected, so press Ctrl+C (or long-press and Copy).'; };
+  try{ navigator.clipboard.writeText(box.value).then(()=>{ $('backupmsg').textContent='Copied to the clipboard.'; },manual); }catch(e){ manual(); }
+});
+let importArmed=0;
+$('importbtn').addEventListener('click',()=>{
+  const box=$('importbox'), msg=$('backupmsg');
+  let obj; try{ obj=decodeSave(box.value); }catch(e){ msg.textContent='That does not look like a valid backup code. Nothing was changed.'; importArmed=0; $('importbtn').textContent='Restore from code'; return; }
+  if(Date.now()>importArmed){
+    importArmed=Date.now()+6000; $('importbtn').textContent='Click again to replace your current progress';
+    msg.textContent='Code looks valid. Restoring replaces everything in this browser.'; return;
+  }
+  importArmed=0; $('importbtn').textContent='Restore from code';
+  state=normalize(obj); state.ts=Date.now(); save(); renderAll();
+  box.value=''; msg.textContent='Restored! Welcome back.'; say('Backup restored.');
+});
+
+/* ---------- codes and reset ---------- */
+$('codeform').addEventListener('submit',e=>{
+  e.preventDefault();
+  const box=$('codebox'), v=box.value.trim().toLowerCase(), msg=$('codemsg');
+  if(!v) return;
+  if(v==='infpoints'){
+    state.points+=9999; save(); updateHud(); sfx('buy');
+    msg.textContent='Code accepted: +9999 points!'; say('Code accepted: +9999 points!');
+  } else msg.textContent='That code is not valid.';
+  box.value='';
+});
+let resetArmed=0, resetTimer=null;
+function resetDisarm(){ resetArmed=0; clearTimeout(resetTimer); $('resetgo').textContent='Delete everything'; $('resetmsg').textContent=''; }
+function resetCheck(){
+  const ok=$('resetcheck').checked&&$('resettype').value.trim()==='RESET';
+  $('resetgo').disabled=!ok; if(!ok) resetDisarm();
+}
+function resetClose(){
+  $('resetpanel').hidden=true; $('resetopen').hidden=false;
+  $('resetcheck').checked=false; $('resettype').value=''; resetDisarm(); $('resetgo').disabled=true;
+}
+$('resetopen').addEventListener('click',()=>{ $('resetpanel').hidden=false; $('resetopen').hidden=true; });
+$('resetcancel').addEventListener('click',()=>{ resetClose(); say('Reset cancelled. Your progress is safe.'); });
+$('resetcheck').addEventListener('change',resetCheck);
+$('resettype').addEventListener('input',resetCheck);
+$('resetgo').addEventListener('click',()=>{
+  if(Date.now()>resetArmed){
+    resetArmed=Date.now()+6000;
+    $('resetgo').textContent='LAST CHANCE: click again to erase everything';
+    $('resetmsg').textContent='Final step. Click the button again within 6 seconds to permanently delete all your progress, or press Cancel.';
+    clearTimeout(resetTimer); resetTimer=setTimeout(resetDisarm,6000);
+    return;
+  }
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  state=normalize({}); state.ts=Date.now(); save();
+  resetClose(); renderAll();
+  say('Progress reset. A brand new aquarium is ready!');
+});
+
+/* ---------- simulation ---------- */
+let frame=0,pellets=[],bubbles=[],queue=0,sparks=[],feedCenter=30;
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const pelletsAlive=()=>pellets.length+queue;
+const swimmers=new Map();   /* runtime position per fish id (not saved) */
+function rt(f){
+  let r=swimmers.get(f.id);
+  if(!r){ r={x:rnd(5,W-18),y:rnd(4,16),dir:Math.random()<.5?1:-1,tx:rnd(5,W-18),ty:rnd(4,16),pause:0}; swimmers.set(f.id,r); }
+  return r;
+}
+
+function sandInit(){
+  let seed=7; const r=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
+  const chars='.:,\'.;';
+  return [0,1].map(()=>Array.from({length:W},()=>chars[Math.floor(r()*chars.length)]));
+}
+let SAND=sandInit();
+
+$('feed').addEventListener('click',()=>{
+  if(state.points<FEED_COST||state.fish.every(f=>f.fullness>=95)) return;
+  state.points-=FEED_COST; queue+=PELLETS; feedCenter=Math.floor(rnd(14,W-16)); save(); updateHud();
+  say('Sprinkling pellets... here they come!');
+});
+
+function eat(f,p){
+  const idx=pellets.indexOf(p); if(idx<0) return;
+  pellets.splice(idx,1);
+  const before=stageOf(f), r=rt(f);
+  f.fullness=Math.min(100,f.fullness+7); f.xp+=1; dirty=true; sfx('eat');
+  for(let i=0;i<2;i++) bubbles.push({x:p.x,y:p.y-1,vy:rnd(.15,.3),ch:'o',ph:rnd(0,6)});
+  const after=stageOf(f);
+  if(after>before){
+    for(let i=0;i<14;i++) sparks.push({x:r.x+rnd(-2,8),y:r.y+rnd(-2,4),life:14});
+    sfx('grow'); say(f.name+' grew into a '+STAGE_NAME[after]+'!');
+    renderFishPanel();
+  } else if(f.fullness>=100){ say(f.name+' is stuffed. Good job!'); }
+  updateHud(); save();
+}
+
+function swim(f){
+  const r=rt(f), F=FISH[stageOf(f)], w=F.w, h=F.h, br=F.body;
+  const lines=r.dir>0?F.R:F.L;
+  const hungryMul=f.fullness<20?0.6:1;
+  let target=null;
+  if(f.fullness<100 && pellets.length){
+    const mx=r.x+(r.dir>0?w-1:0), my=r.y+br; let bd=1e9;
+    pellets.forEach(p=>{const d=Math.abs(p.x-mx)+Math.abs(p.y-my)*2; if(d<bd){bd=d;target=p;}});
+  }
+  const ymax=WATER_BOT-br, xmax=W-1-w;
+  if(target){
+    const mx=r.x+(r.dir>0?w-1:0);
+    if(target.x>mx+1) r.dir=1; else if(target.x<mx-1) r.dir=-1;
+    r.tx=target.x-(r.dir>0?w-1:0); r.ty=target.y-br; r.pause=0;
+  } else if(r.pause>0){ r.pause--; }
+  else if(Math.abs(r.tx-r.x)<1.2 && Math.abs(r.ty-r.y)<.8){
+    if(Math.random()<.35) r.pause=Math.floor(rnd(8,30));
+    r.tx=rnd(2,xmax); r.ty=rnd(3,Math.max(4,ymax-1));
+  }
+  r.tx=Math.max(1,Math.min(xmax,r.tx)); r.ty=Math.max(2,Math.min(ymax,r.ty));
+  if(!target && Math.abs(r.tx-r.x)>1.5) r.dir=r.tx>r.x?1:-1;
+  if(!r.pause||target){
+    const sl=target?1:(0.55+0.45*daylight);
+    const sx=(target?1.3:0.42)*hungryMul*sl, sy=(target?0.8:0.15)*hungryMul*sl;
+    const dx=r.tx-r.x, dy=r.ty-r.y;
+    r.x+=Math.max(-sx,Math.min(sx,dx)); r.y+=Math.max(-sy,Math.min(sy,dy));
+  }
+  r.x=Math.max(1,Math.min(xmax,r.x)); r.y=Math.max(2,Math.min(ymax,r.y));
+  if(target){
+    const mx=r.x+(r.dir>0?w-1:0), my=r.y+br;
+    if(Math.abs(mx-target.x)<=1.6 && Math.abs(my-target.y)<=1.2) eat(f,target);
+  }
+  if(Math.random()<.015){ bubbles.push({x:Math.round(r.x+(r.dir>0?w:-1)),y:Math.round(r.y+br),vy:rnd(.15,.3),ch:'o',ph:rnd(0,6)}); sfx('bubble'); }
+  if(daylight<0.3 && Math.random()<.012) bubbles.push({x:Math.round(r.x+w/2),y:Math.round(r.y)-1,vy:rnd(.08,.16),ch:'z',ph:rnd(0,6)});
+}
+
+function step(){
+  frame++;
+  state.fish.forEach(f=>{ f.fullness=Math.max(0,f.fullness-(0.25/60)*0.08); });
+  if(queue>0 && frame%2===0){
+    queue--; pellets.push({x:Math.max(2,Math.min(W-3,Math.round(feedCenter+rnd(-7,7)))),y:2,land:0});
+  }
+  for(let i=pellets.length-1;i>=0;i--){
+    const p=pellets[i];
+    if(p.y<WATER_BOT){ p.y=Math.min(WATER_BOT,p.y+0.22); if(p.y>=WATER_BOT) p.land=frame; }
+    else if(frame-p.land>110){ pellets.splice(i,1); bubbles.push({x:p.x,y:p.y-1,vy:.2,ch:'.',ph:0}); }
+  }
+  state.fish.forEach(swim);
+  if(Math.random()<.04){ bubbles.push({x:Math.floor(rnd(3,W-3)),y:SAND_TOP-1,vy:rnd(.12,.28),ch:Math.random()<.5?'o':'.',ph:rnd(0,6)}); if(Math.random()<.3) sfx('bubble'); }
+  for(let i=bubbles.length-1;i>=0;i--){const b=bubbles[i]; b.y-=b.vy; if(b.y<2) bubbles.splice(i,1);}
+  for(let i=sparks.length-1;i>=0;i--){ if(--sparks[i].life<=0) sparks.splice(i,1); }
+  if(frame%12===0){ updateHud(); applyDaylight(); timerTick(); }
+  if(frame%60===0){ renderTasks(); }
+  if(frame%400===0){ checkDay(); }
+  if(dirty && frame%60===0) save();
+  render();
+}
+
+/* ---------- rendering ---------- */
+function render(){
+  const ch=new Array(W*H).fill(' '), cl=new Array(W*H).fill('');
+  const put=(x,y,c,k)=>{ x=Math.round(x); y=Math.round(y); if(x<1||x>W-2||y<1||y>H-2) return; const i=y*W+x; ch[i]=c; cl[i]=k; };
+  const sprite=(lines,x,y,k,map)=>{ for(let r=0;r<lines.length;r++){const L=lines[r]; for(let c=0;c<L.length;c++){const g=L[c]; if(g!==' ') put(x+c,y+r,g,map?map(g,k,c,r):k);}}};
+  /* frame */
+  for(let x=0;x<W;x++){ ch[x]=ch[(H-1)*W+x]='='; cl[x]=cl[(H-1)*W+x]='rim'; }
+  for(const i of [0,W-1,(H-1)*W,(H-1)*W+W-1]){ ch[i]='+'; cl[i]='rim'; }
+  for(let y=1;y<H-1;y++){ ch[y*W]=ch[y*W+W-1]='|'; cl[y*W]=cl[y*W+W-1]='rim'; }
+  /* surface */
+  const off=Math.floor(frame/3);
+  for(let x=1;x<W-1;x++) put(x,1,((x+off)%4<2)?'~':'-','wave');
+  /* background */
+  if(state.owned.bg){
+    if(daylight>0.4) for(let b=4;b<W;b+=20) for(let y=2;y<=13;y++) put(b+y,y,y%3===0?':':'\\','ray');
+    for(let x=1;x<W-1;x++){
+      const hy=Math.floor(WATER_BOT-(1.6+1.4*Math.sin(x*0.11+1)+0.9*Math.sin(x*0.29)));
+      put(x,hy,'_','bgfar'); for(let y=hy+1;y<=WATER_BOT;y++) put(x,y,'.','bgfar');
+    }
+  }
+  /* sand */
+  for(let r=0;r<2;r++) for(let x=1;x<W-1;x++) put(x,SAND_TOP+r,SAND[r][x],'sand');
+  const shown=instList().filter(i=>state.owned[i.key]);
+  const drawItem=inst=>{
+    const it=inst.it, fr=it.frames[it.frames.length>1?Math.floor(frame/7)%it.frames.length:0];
+    const q=itemPos(inst), sel=editing&&selId===inst.key;
+    sprite(fr,q.x,q.y,sel?'sel':it.cls,(g,k)=>g==='$'&&!sel?'gold':k);
+  };
+  shown.filter(i=>i.it.z<=2).sort((a,b)=>a.it.z-b.it.z).forEach(drawItem);
+  /* fish (smaller ones first so big fish are on top) */
+  const bob=Math.sin(frame*0.18)*0.45;
+  const labels=[];
+  state.fish.slice().sort((a,b)=>stageOf(a)-stageOf(b)).forEach(f=>{
+    const r=rt(f), F=FISH[stageOf(f)], lines=r.dir>0?F.R:F.L, rb=f.color==='rainbow';
+    const base='fc-'+f.color, fy=r.y+bob;
+    sprite(lines,r.x,fy,base,(g,k,c)=>g==='o'?'eye':(rb?'rb'+((c+Math.floor(frame/3))%6):k));
+    labels.push({f:f,r:r,F:F,fy:fy});
+  });
+  shown.filter(i=>i.it.z===3).forEach(drawItem);
+  /* names follow their fish */
+  labels.forEach(({f,r,F,fy})=>{
+    const chars=Array.from(f.name); if(!chars.length) return;
+    const lx=Math.max(1,Math.min(W-1-chars.length,Math.round(r.x+(F.w-chars.length)/2)));
+    let ly=Math.round(fy)-1; if(ly<2) ly=Math.round(fy)+F.h;
+    chars.forEach((c,i)=>{ if(c!==' ') put(lx+i,ly,c,'fname'); });
+  });
+  /* pellets */
+  pellets.forEach(p=>put(p.x,p.y,p.y>=WATER_BOT?',':'o','pel'));
+  bubbles.forEach(b=>put(b.x+Math.sin(frame*0.15+b.ph)*0.9,b.y,b.ch,'bub'));
+  sparks.forEach(s=>put(s.x+Math.sin(s.life)*1.5,s.y-(14-s.life)*0.3,s.life%2?'*':'+','spark'));
+  /* to html */
+  let out='';
+  for(let y=0;y<H;y++){
+    let run='',cur=null;
+    const flush=()=>{ if(run==='') return; out+=cur?'<span class="'+cur+'">'+run+'</span>':run; run=''; };
+    for(let x=0;x<W;x++){
+      const i=y*W+x,k=cl[i]; if(k!==cur){flush();cur=k;}
+      const c=ch[i]; run+=c==='&'?'&amp;':c==='<'?'&lt;':c==='>'?'&gt;':c;
+    }
+    flush(); out+=y<H-1?'\n':'';
+  }
+  tank.innerHTML=out;
+}
+
+/* ---------- fit tank to width ---------- */
+function fit(){
+  const probe=document.createElement('span');
+  probe.style.cssText='position:absolute;visibility:hidden;font:100px '+getComputedStyle(tank).fontFamily+';white-space:pre';
+  probe.textContent='M'.repeat(20); document.body.appendChild(probe);
+  const cw=probe.getBoundingClientRect().width/20/100; probe.remove();
+  const avail=$('tankwrap').clientWidth;
+  const fs=Math.max(7,Math.min(17,Math.floor(avail/(W*cw)*10)/10));
+  tank.style.fontSize=fs+'px'; cellW=cw*fs; cellH=fs*1.12;
+}
+window.addEventListener('resize',fit);
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fit);
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ checkDay(); renderTasks(); applyDaylight(); timerTick(); } });
+window.addEventListener('pagehide',save);
+
+
+/* ---------- go ---------- */
+applyWater(); checkDay(); renderTasks(); renderShop(); renderFishPanel(); renderTimer(); syncSound(); applyDaylight(); updateHud(); fit();
+say('Welcome! Finish tasks to earn points, then feed your fish to help them grow.');
+setInterval(step,80);
+})();
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
+</script>
+</body>
+</html>
